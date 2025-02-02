@@ -7,6 +7,7 @@ import bodyParser from 'body-parser';
 // Importar los controladores
 import userRouter from './routers/users_routes.js';
 import chatsRouter from './routers/chats_routes.js';
+import messagesRouter from './routers/messages_routes.js';
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ app.get('/', (req, res) => {
 // Rutas de usuarios
 app.use('/api/v1', userRouter);
 app.use('/api/v1', chatsRouter);
+app.use('/api/v1', messagesRouter);
 
 // Ruta para el error 404
 app.use((req, res, next) => {

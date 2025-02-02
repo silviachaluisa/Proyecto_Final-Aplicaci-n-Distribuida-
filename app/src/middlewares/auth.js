@@ -14,7 +14,7 @@ const auth = async (req, res, next) => {
             throw new Error("Usuario no autenticado, por favor inicie sesión");
         }
 
-        req.usuario = usuario;
+        req.uid = usuario.id;
         next();
     } catch (error) {
         res.status(401).json({ message: 'Error en la autenticacion', error: error.message });

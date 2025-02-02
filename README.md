@@ -1,9 +1,5 @@
 # 📦 Proyecto Final
 
-PoliJuego es un juego desarrollado con libGDX, utilizando el generador de proyectos gdx-liftoff.
-
-Este proyecto tiene como objetivo proporcionar una experiencia de juego interactiva, permitiendo a los jugadores explorar un entorno en 2D mientras enfrentan enemigos, resuelven obstáculos y utilizan mecánicas de juego como saltos y colisiones.
-
 ## 🚀 Autores
 
 - Silvia Chaluisa

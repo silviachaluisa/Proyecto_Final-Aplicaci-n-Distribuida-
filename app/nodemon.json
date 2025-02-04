@@ -2,5 +2,5 @@
   "watch": ["src"],
   "ext": "js,json",
   "ignore": ["src/public"],
-  "exec": "node src/index.js"
+  "exec": "node --trace-warnings src/index.js"
 }

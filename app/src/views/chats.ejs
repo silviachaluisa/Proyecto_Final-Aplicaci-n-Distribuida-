@@ -39,40 +39,66 @@
             <p id="notification-message"></p>
         </div>
     </div>
-    <div class="w-full grid grid-cols-2 gap-4 max-w-4xl p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md shadow-gray-400/30 dark:shadow-black/50">
-        <div class="flex flex-col items-center justify-center border-r border-gray-300 dark:border-gray-700">
+    <div class="w-full grid grid-cols-2 gap-4 max-w-7xl mt-16 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md shadow-gray-400/30 dark:shadow-black/50 h-5/6">
+        <div class="flex flex-col max-w-[70%] items-start justify-start border-r border-gray-300 dark:border-gray-700 p-1 overflow-y-auto">
             <h1 class="text-3xl font-semibold text-center text-gray-800 dark:text-white mb-6">
                 Lista de <span class="text-blue-500 uppercase">chats</span>
             </h1>
 
-            <div class="relative w-full mr-4">
+            <div class="relative w-11/12 flex items-center justify-center">
                 <input type="text" placeholder="Buscar chat" class="w-full p-3 border rounded-lg dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <i class="fa-solid fa-search absolute right-4 top-4 text-gray-500 dark:text-gray-300"></i>
+                <i class="fa-solid fa-search absolute right-5 top-4 text-gray-500 dark:text-gray-300"></i>
             </div>
 
-            <div>
-                <div class="flex items-center justify-center bg-gray-300 rounded-lg p-4 mt-4 cursor-pointer hover:bg-gray-400 w-10 h-10">
+            <div class="flex flex-row gap-4 mt-4 justify-center items-center">
+                <div id="newChatBtn" class="flex items-center justify-center bg-gray-300 rounded-lg p-4 mt-4 cursor-pointer hover:bg-gray-400 w-10 h-10">
                     <i class="fa-solid fa-plus text-center text-black"></i>
                 </div>
+
+                <div id="refresh" class="flex items-center justify-center bg-gray-300 rounded-lg p-4 mt-4 cursor-pointer hover:bg-gray-400 w-10 h-10">
+                    <i class="fa-solid fa-rotate-right text-center text-black"></i>
+                </div>
             </div>
 
-            <div id="usuario1" class="flex items-center justify-between w-full mt-4 mr-4 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
-                <div class="w-14 h-14 bg-gray-300 dark:bg-slate-700 rounded-full flex items-center justify-center">
-                    <i class="fa-solid fa-user text-gray-500 dark:text-gray-300 text-3xl"></i>
-                </div>
-                <p class="text-gray-800 dark:text-white font-semibold">Usuario 1</p>
-
-                <button class="ml-4 text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white">
-                    <i class="fa-solid fa-trash text-2xl"></i>
-                </button>
+            <div id="chats-container" class="flex flex-col gap-4 mt-4 w-full justify-center items-center">
+                <!-- Aquí se insertarán los chats -->
             </div>
         </div>
-        <!-- Separador vertical-->
+        
         <div class="flex flex-col items-center justify-center">
             <h1 class="text-3xl font-semibold text-center text-gray-800 dark:text-white mb-6">
                 Lista de <span class="text-blue-500 uppercase">usuarios</span>
             </h1>
         </div>
-    </div>    
+    </div>
+
+    <!-- Modal para la creación de un nuevo chat -->
+    <div id="newChatModal" class="fixed inset-0 bg-gray-900 bg-opacity-60 flex items-center justify-center transition-opacity duration-300 hidden">
+        <div class="bg-white dark:bg-gray-800 w-full max-w-md p-6 rounded-lg shadow-xl transform transition-all scale-95">
+            <!-- Encabezado -->
+            <div class="flex items-center justify-between border-b pb-3">
+                <h1 class="text-2xl font-semibold text-gray-800 dark:text-white">Nuevo chat</h1>
+                <button id="close-modal" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-xl" onclick="closeNewChatModal()">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Contenido del modal -->
+            <div class="mt-4 space-y-4">
+                <input type="text" id="chat-name" placeholder="Nombre del chat"
+                    class="w-full p-3 border rounded-lg dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" id="is-group" class="cursor-pointer w-5 h-5 accent-blue-500">
+                    <label for="is-group" class="text-gray-800 dark:text-white cursor-pointer">Es un grupo</label>
+                </div>
+
+                <button id="create-chat" class="w-full p-3 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+                    Crear chat
+                </button>
+            </div>
+        </div>
+    </div>
+    <script src="/js/chatsView.js"></script>
 </body>
 </html>

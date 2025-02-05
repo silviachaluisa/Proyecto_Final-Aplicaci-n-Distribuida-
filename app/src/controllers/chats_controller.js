@@ -92,7 +92,15 @@ export const getChats = async (req, res) => {
         if (chats.length === 0) {
             return res.status(404).json({ message: "No hay chats" });
         }
-        res.json(chats);
+
+        // Listar los chats a los que pertenece el usuario
+        const userChats = await ChatUsers.findAll({ where: { user_id: req.uid } });
+        const userChatsIds = userChats.map(chat => chat.chat_id);
+
+        // Filtrar los chats a los que pertenece el usuario
+        const chatList = chats.filter(chat => userChatsIds.includes(chat.id));
+
+        res.json(chatList);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Ocurrió un error", error: error.message });

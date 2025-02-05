@@ -5,3 +5,13 @@ package-lock.json
 
 #Archivos de logs
 *.log
+
+#Archivos de respaldo
+*.bak
+*.swp
+
+# Adicionales
+.DS_Store
+Thumbs.db
+*.py
+

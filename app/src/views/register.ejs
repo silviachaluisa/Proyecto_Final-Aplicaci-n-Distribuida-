@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/css/styles.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>Registro</title>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 flex flex-col items-center justify-center h-screen">
+
+    <!-- Banner de notificaciones -->
+    <div id="notification" class="flex m-8 text-white rounded-lg shadow-lg hidden">
+        <div id="notification-icon-container" class="h-full w-12 flex items-center justify-center rounded-l-lg p-6">
+            <i id="notification-icon" class="text-3xl fa-solid"></i>
+        </div>
+        <div class="flex items-center justify-center p-6 font-bold w-fit-content">
+            <p id="notification-message"></p>
+        </div>
+    </div>
+
+    <div class="w-full max-w-md p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+        <h1 class="text-3xl font-semibold text-center text-gray-800 dark:text-white mb-6">
+            Te damos la bienvenida a <span class="text-blue-500 uppercase">Instamessage</span>
+        </h1>
+        <form id="register-form" class="space-y-4">
+            <input type="text" id="username" name="username" placeholder="Nombre de usuario"
+            class="w-full p-3 border rounded-lg dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+            <input type="email" id="email" name="email" placeholder="Correo"
+                class="w-full p-3 border rounded-lg dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+            
+            <div class="relative">
+                <input type="password" name="password" id="password" placeholder="Contraseña"
+                    class="w-full p-3 border rounded-lg dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <i id="toggle-pass" class="fa fa-eye absolute right-4 top-5 cursor-pointer text-gray-500 dark:text-gray-300"></i>
+            </div>
+
+            <div class="relative">
+                <input type="password" name="Cpassword" id="Cpassword" placeholder="Repite la contraseña"
+                    class="w-full p-3 border rounded-lg dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <i id="toggle-pass-2" class="fa fa-eye absolute right-4 top-5 cursor-pointer text-gray-500 dark:text-gray-300"></i>
+            </div>
+
+            <button
+                id="register-btn"
+                class="w-full bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition cursor-not-allowed" disabled>
+                Registrarse
+            </button>
+
+            <div class="flex flex-col items-start my-4 w-full">
+                <small id="password-strength-text" class="dark:text-white text-sm mb-1"></small>
+                <div class="w-full h-2 bg-gray-500 rounded-full overflow-hidden">
+                    <div id="password-strength-meter" class="h-full bg-red-500 rounded-full transition-all duration-300" style="width: 0%;"></div>
+                </div>
+            </div>                   
+
+            <p class="dark:text-white text-center">Ya tienes una cuenta, <a href="/" class="text-blue-500 font-bold">Inicia sesion</a></p>
+        </form>
+    </div>
+
+    <script src="/js/registerView.js"></script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/css/styles.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>InstaMessage</title>
+</head>
+
+<header class="w-full bg-gray-500 dark:bg-gray-800 fixed top-0 z-10">
+    <nav class="bg-gray-500 dark:bg-gray-800 w-full shadow-lg rounded-lg">
+        <div class="max-w-4xl mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <a href="/" class="text-white font-bold text-lg">InstaMessage</a>
+                </div>
+                <div class="flex items-center">
+                    <a href="/view/profile" class="text-white font-semibold ml-4">
+                        <i class="fa-solid fa-user"></i>
+                        <span class="ml-2">Perfil</span>
+                    </a>
+                </div>
+                <div class="flex items-center">
+                    <a href="/logout" class="text-white font-semibold ml-4">Cerrar sesión</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<body class="bg-gray-100 dark:bg-gray-900 flex flex-col items-center justify-center h-screen">
+    <!-- Banner de notificaciones -->
+    <div id="notification" class="flex m-8 text-white rounded-lg shadow-lg hidden">
+        <div id="notification-icon-container" class="h-full w-12 flex items-center justify-center rounded-l-lg p-6">
+            <i id="notification-icon" class="text-3xl fa-solid"></i>
+        </div>
+        <div class="flex items-center justify-center p-6 font-bold w-fit-content">
+            <p id="notification-message"></p>
+        </div>
+    </div>
+    <div class="w-full grid grid-cols-2 gap-4 max-w-4xl p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md shadow-gray-400/30 dark:shadow-black/50">
+        <div class="flex flex-col items-center justify-center border-r border-gray-300 dark:border-gray-700">
+            <h1 class="text-3xl font-semibold text-center text-gray-800 dark:text-white mb-6">
+                Lista de <span class="text-blue-500 uppercase">chats</span>
+            </h1>
+
+            <div class="relative w-full mr-4">
+                <input type="text" placeholder="Buscar chat" class="w-full p-3 border rounded-lg dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <i class="fa-solid fa-search absolute right-4 top-4 text-gray-500 dark:text-gray-300"></i>
+            </div>
+
+            <div>
+                <div class="flex items-center justify-center bg-gray-300 rounded-lg p-4 mt-4 cursor-pointer hover:bg-gray-400 w-10 h-10">
+                    <i class="fa-solid fa-plus text-center text-black"></i>
+                </div>
+            </div>
+
+            <div id="usuario1" class="flex items-center justify-between w-full mt-4 mr-4 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                <div class="w-14 h-14 bg-gray-300 dark:bg-slate-700 rounded-full flex items-center justify-center">
+                    <i class="fa-solid fa-user text-gray-500 dark:text-gray-300 text-3xl"></i>
+                </div>
+                <p class="text-gray-800 dark:text-white font-semibold">Usuario 1</p>
+
+                <button class="ml-4 text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white">
+                    <i class="fa-solid fa-trash text-2xl"></i>
+                </button>
+            </div>
+        </div>
+        <!-- Separador vertical-->
+        <div class="flex flex-col items-center justify-center">
+            <h1 class="text-3xl font-semibold text-center text-gray-800 dark:text-white mb-6">
+                Lista de <span class="text-blue-500 uppercase">usuarios</span>
+            </h1>
+        </div>
+    </div>    
+</body>
+</html>

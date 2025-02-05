@@ -15,7 +15,7 @@ router.route("/leave-chat")
     .post(auth, leaveChat); // Ruta para salir de un chat (POST /api/v1/chat/leave)
 
 router.route("/chats")
-    .get(auth, getChats); // Ruta para obtener todos los chats (GET /api/v1/chat)
+    .get(auth, getChats); // Ruta para obtener todos los chats (GET /api/v1/chats)
 
 router.route("/chat-users/:chat_id")
     .get(auth, getChatUsers); // Ruta para obtener todos los usuarios de un chat por su ID (GET /api/v1/chat-users/:id)

@@ -1,7 +1,6 @@
 import UserModel from "../models/users_model.js";
 import bcrypt from "bcrypt";
 import generarJWT from '../helpers/JWT.js';
-import { UAParser } from "ua-parser-js";
 
 export const register = async (req, res) => {
     try {

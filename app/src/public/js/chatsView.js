@@ -74,7 +74,34 @@ function closeNewChatModal() {
     modal.classList.add('hidden');
 }
 
+function handleLogout() {
+    localStorage.removeItem('token');
+    window.location.href = '/';
+}
+
 document.getElementById('newChatBtn').addEventListener('click', openNewChatModal);
 document.getElementById('refresh').addEventListener('click', getChats);
+document.getElementById('logout').addEventListener('click', handleLogout);
+
+document.addEventListener("DOMContentLoaded", async function () {
+    const token = localStorage.getItem("token");
+    if (token) {
+        const response = await fetch("/api/v1/user", {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            method: "GET",
+        });
+
+        if (response.ok) {
+            location.href = "/view/chats";
+        } else {
+            localStorage.removeItem("token");
+            window.location.href = '/';
+        }
+    } else {
+        window.location.href = '/';
+    }
+});
 
 getChats();

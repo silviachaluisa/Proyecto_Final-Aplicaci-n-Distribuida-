@@ -18,6 +18,10 @@ const Chat = sequelize.define('chats', {
         allowNull: false,
         unique: true
     },
+    owner: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
     createdAt: {
         type: DataTypes.DATE,
         allowNull: false,

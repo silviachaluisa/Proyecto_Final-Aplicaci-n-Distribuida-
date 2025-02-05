@@ -15,7 +15,7 @@ export const createChat = async (req, res) => {
             return res.status(400).json({ message: "El chat ya existe" });
         }
 
-        const newChat = await ChatModel.create({ name, is_group });
+        const newChat = await ChatModel.create({ name, is_group,  owner: req.uid });
         await ChatUsers.create({ chat_id: newChat.id, user_id: req.uid });
 
         res.json({ message: "Chat creado y unido exitosamente", chat: newChat });

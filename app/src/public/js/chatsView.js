@@ -102,7 +102,7 @@ async function getChats() {
 
     } catch (error) {
         console.error("Error al obtener los chats:", error);
-        chatsContainer.innerHTML = `<p class="text-red-500">Error al cargar los chats.</p>`;
+        chatsContainer.innerHTML = `<p class="text-red-500 font-semibold">Error al cargar los chats.</p>`;
     }
 }
 
@@ -167,17 +167,7 @@ socket.on("chat message", (data) => {
 socket.on("new chat", (data) => {
     console.log("Nuevo chat:", data);
 
-    const chatsContainer = document.getElementById('chats-container');
-    const chatElement = document.createElement('div');
-    chatElement.classList.add('flex', 'items-center', 'justify-eventy', 'w-full', 'p-4', 'border-b', 'rounded-lg', "dark:border-gray-100", "dark:bg-gray-700", "hover:bg-slate-800", "dark:hover:bg-slate-800", "mr-4");
-
-    chatElement.innerHTML = `
-        <div class="w-14 h-14 bg-gray-300 dark:bg-slate-800 rounded-full flex items-center justify-center border-2 border-gray-300 dark:border-gray-900">
-            <i class="fa-solid ${data.is_group ? "fa-user-group" : "fa-user"} text-gray-500 dark:text-gray-300 text-3xl"></i>
-        </div>
-        <p class="text-gray-800 dark:text-white font-semibold ml-4">${data.name}</p>
-    `;
-    chatsContainer.appendChild(chatElement);
+    getChats(); // Actualizar la lista de chats
 });
 
 function enviarMensaje() {

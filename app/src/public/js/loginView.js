@@ -75,6 +75,7 @@ document.getElementById('login-form').addEventListener('submit', async function 
                 location.href = '/view/chats';
             }, 3000);
         } else {
+            console.error('Error:', data);
             showNotification(data.message, 'error');
         }
     } catch (error) {

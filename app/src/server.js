@@ -5,6 +5,8 @@ import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import path from "path";
 import { fileURLToPath } from "url";
+import { createServer } from 'http';
+import { Server } from 'socket.io';
 
 // Importar los controladores
 import userRouter from './routers/users_routes.js';
@@ -15,6 +17,13 @@ dotenv.config();
 
 // Inicializar express
 const app = express();
+const server = createServer(app); // Crear el servidor HTTP
+const io = new Server(server, {
+    cors: {
+        origin: "*", // Permitir conexiones desde cualquier origen
+        methods: ["GET", "POST"]
+    }
+});
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -54,5 +63,29 @@ app.use((req, res, next) => {
     res.status(404).json({message: 'Recurso no encontrado'});
 });
 
+// Configuración de socket.io
+// Inicializar socket.io
+io.on('connection', (socket) => {
+    console.log('Usuario conectado:', socket.id);
+
+    // Escuchar el evento 'chat message'
+    socket.on('chat message', (msg) => {
+        console.log('Mensaje:', msg);
+        
+        // Enviar el mensaje a todos los clientes conectados
+        io.emit('chat message', msg);
+    });
+
+    // Escuchar el evento `create chat`
+    socket.on('create chat', (chat) => {
+        console.log('Chat creado:', chat.name);
+        io.emit('new chat', chat);
+    });
+
+    socket.on('disconnect', () => {
+        console.log('Usuario desconectado:', socket.id);
+    });
+});
+
 // exportar app
-export default app;
+export default server;

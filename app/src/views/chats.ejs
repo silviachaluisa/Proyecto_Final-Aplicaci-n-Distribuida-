@@ -6,6 +6,7 @@
     <link href="/css/styles.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <title>InstaMessage</title>
+    <script src="/socket.io/socket.io.js"></script> <!-- Cliente Socket.io -->
 </head>
 
 <header class="w-full bg-gray-500 dark:bg-gray-800 fixed top-0 z-10">
@@ -18,7 +19,7 @@
                 <div class="flex items-center">
                     <a href="/view/profile" class="text-white font-semibold ml-4">
                         <i class="fa-solid fa-user"></i>
-                        <span class="ml-2">Perfil</span>
+                        <span class="ml-2 font-semibold" id="profile-name">Perfil</span>
                     </a>
                 </div>
                 <div class="flex items-center">
@@ -31,15 +32,15 @@
 
 <body class="bg-gray-100 dark:bg-gray-900 flex flex-col items-center justify-center h-screen">
     <!-- Banner de notificaciones -->
-    <div id="notification" class="flex m-8 text-white rounded-lg shadow-lg hidden">
+    <!-- <div id="notification" class="flex m-8 text-white rounded-lg shadow-lg hidden">
         <div id="notification-icon-container" class="h-full w-12 flex items-center justify-center rounded-l-lg p-6">
             <i id="notification-icon" class="text-3xl fa-solid"></i>
         </div>
         <div class="flex items-center justify-center p-6 font-bold w-fit-content">
             <p id="notification-message"></p>
         </div>
-    </div>
-    <div class="w-full grid grid-cols-2 gap-4 max-w-7xl mt-16 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md shadow-gray-400/30 dark:shadow-black/50 h-5/6">
+    </div> -->
+    <div class="w-full grid grid-cols-2 gap-4 max-w-7xl min-w-[830px] mt-16 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md shadow-gray-400/30 dark:shadow-black/50 h-5/6">
         <div class="flex flex-col max-w-[70%] items-start justify-start border-r border-gray-300 dark:border-gray-700 p-1 overflow-y-auto">
             <h1 class="text-3xl font-semibold text-center text-gray-800 dark:text-white mb-6">
                 Lista de <span class="text-blue-500 uppercase">chats</span>
@@ -67,13 +68,25 @@
         
         <div class="flex flex-col items-center justify-center">
             <h1 class="text-3xl font-semibold text-center text-gray-800 dark:text-white mb-6">
-                Lista de <span class="text-blue-500 uppercase">usuarios</span>
+                Accede a un <span class="text-blue-500 uppercase">chat</span>
             </h1>
+            <p class="text-center text-gray-600 dark:text-white">
+                Para acceder a un chat, selecciona uno de la lista de chats a la izquierda.
+            </p>
         </div>
     </div>
 
     <!-- Modal para la creación de un nuevo chat -->
-    <div id="newChatModal" class="fixed inset-0 bg-gray-900 bg-opacity-60 flex items-center justify-center transition-opacity duration-300 hidden">
+    <div id="newChatModal" class="fixed inset-0 bg-gray-900 bg-opacity-60 flex flex-col items-center justify-center transition-opacity duration-300 hidden">
+        <!-- Banner de notificaciones -->
+        <div id="notification" class="flex m-8 text-white rounded-lg shadow-lg hidden">
+            <div id="notification-icon-container" class="h-full w-12 flex items-center justify-center rounded-l-lg p-6">
+                <i id="notification-icon" class="text-3xl fa-solid"></i>
+            </div>
+            <div class="flex items-center justify-center p-6 font-bold w-fit-content">
+                <p id="notification-message"></p>
+            </div>
+        </div>
         <div class="bg-white dark:bg-gray-800 w-full max-w-md p-6 rounded-lg shadow-xl transform transition-all scale-95">
             <!-- Encabezado -->
             <div class="flex items-center justify-between border-b pb-3">

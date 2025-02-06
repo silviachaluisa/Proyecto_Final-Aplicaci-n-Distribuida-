@@ -16,11 +16,11 @@ services:
       interval: 5s
       timeout: 20s
       retries: 10
-    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --server-id=1 --log-bin=mysql-bin --binlog-do-db=replica 
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --server-id=1 --log-bin=mysql-bin --binlog-do-db=instamessage_db 
     networks:
       - my_network
 
-  mysql-master2:
+  mysql-esclavo:
     image: mysql:8.0
     container_name: mysql_esclavo
     ports:
@@ -35,7 +35,7 @@ services:
       interval: 5s
       timeout: 20s
       retries: 10
-    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --server-id=2 --relay-log=mysql-relay-bin --log-bin=mysql-bin --binlog-do-db=replica --read-only=ON
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --server-id=2 --relay-log=mysql-relay-bin --log-bin=mysql-bin --binlog-do-db=instamessage_db --read-only=ON
     networks:
       - my_network
 
@@ -45,7 +45,7 @@ services:
     ports:
       - "8081:80"
     environment:
-      - PMA_HOSTS=mysql-master1,mysql-master2  # Corrección: sin comillas dobles
+      - PMA_HOSTS=mysql-master1,mysql-esclavo  # Corrección: sin comillas dobles
       - PMA_ARBITRARY=1
     networks:
       - my_network
@@ -61,7 +61,7 @@ services:
       - my_network
     depends_on:
       - mysql-master1
-      - mysql-master2
+      - mysql-esclavo
     environment:
       - PORT=3000
       - MySQL_DATABASE=instamessage_db
@@ -89,7 +89,7 @@ services:
       - my_network
     depends_on:
       - mysql-master1
-      - mysql-master2
+      - mysql-esclavo
     environment:
       - PORT=3000
       - MySQL_DATABASE=instamessage_db
@@ -117,7 +117,7 @@ services:
       - my_network
     depends_on:
       - mysql-master1
-      - mysql-master2
+      - mysql-esclavo
     environment:
       - PORT=3000
       - MySQL_DATABASE=instamessage_db

@@ -61,7 +61,7 @@ const updateButton = document.getElementById("update-btn");
 document.getElementById('profile-form').addEventListener('submit', async function (event) {
     event.preventDefault(); // Evita que la página se recargue
 
-    const username = document.getElementById('name').value;
+    const name = document.getElementById('name').value;
     const email = document.getElementById('email').value;
 
     try {
@@ -71,7 +71,7 @@ document.getElementById('profile-form').addEventListener('submit', async functio
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
             },
-            body: JSON.stringify({ username, email }),
+            body: JSON.stringify({ name, email }),
         });
 
         const data = await response.json();

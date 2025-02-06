@@ -8,15 +8,8 @@ GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
 
 -- Crear el usuario de replicación
-CREATE USER 'replica'@'%' IDENTIFIED BY 'replica';
+CREATE USER IF NOT EXISTS 'replica'@'%' IDENTIFIED BY 'replica';
 GRANT REPLICATION SLAVE ON *.* TO 'replica'@'%';
 FLUSH PRIVILEGES;
--- Asegurarse de que los privilegios se apliquen correctamente
-FLUSH PRIVILEGES;
 
-
--- Crear el usuario de replicación
-CREATE USER 'replica'@'%' IDENTIFIED BY 'replica';
-GRANT REPLICATION SLAVE ON *.* TO 'replica'@'%';
-FLUSH PRIVILEGES;
 

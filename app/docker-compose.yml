@@ -1,102 +1,94 @@
 services:
+
   dbmaster:
-    image: mysql:latest
-    restart: always
-    env_file:
-      - ./.env
+    image: mysql:8.0
+    container_name: dbmaster1
     environment:
-      MYSQL_DATABASE: "${MYSQL_DATABASE}"
-      MYSQL_USER: "${MYSQL_USER}"
-      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
-    ports:
-      - "${MYSQL_LOCAL_PORT}:${DOCKER_SQL_PORT}"
-    volumes:
-      - mysql_master_data:/var/lib/mysql
-      - ./init-sql/master.sql:/docker-entrypoint-initdb.d/01-master.sql
-      - ./init-sql/init.sql:/docker-entrypoint-initdb.d/02-init.sql
-      - ./conf:/etc/mysql/conf.d
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: chatapp
     networks:
-      - database_network
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      retries: 5
-      timeout: 5s
+      - mysql-network
+      - app-network
+    ports:
+      - "3306:3306"
+    command: --server-id=1 --log-bin=mysql-bin --binlog-do-db=testdb
+
   dbreplica:
-    image: mysql:latest
-    restart: always
-    env_file:
-      - ./.env
+    image: mysql:8.0
+    container_name: dbreplica1
     environment:
-      MYSQL_DATABASE: "${MYSQL_DATABASE}"
-      MYSQL_USER: "${MYSQL_USER}"
-      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
-    ports:
-      - "3309:${DOCKER_SQL_PORT}"
-    volumes:
-      - mysql_slave_data:/var/lib/mysql
-      - ./init-sql/slave.sql:/docker-entrypoint-initdb.d/01-slave.sql
-      - ./init-sql/init.sql:/docker-entrypoint-initdb.d/02-init.sql
-      - ./conf:/etc/mysql/conf.d
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: chatapp
     networks:
-      - database_network
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      retries: 5
-      timeout: 5s
-  # Contenedor para la vista de la base de datos (PHPMyAdmin)
-  phpmyadmin-master:
-    image: phpmyadmin:latest
+      - mysql-network
+    command: --server-id=2 --log-bin=mysql-bin --binlog-do-db=testdb
+
+  phpmyadmin1:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin1
     environment:
       PMA_HOST: dbmaster
-      PMA_USER: "${MYSQL_USER}"
-      PMA_PASSWORD: "${MYSQL_PASSWORD}"
-      PMA_ARBITRARY: 1
-    ports:
-      - "8080:80"
-    depends_on:
-      - dbmaster
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: root
     networks:
-      - database_network
-  phpmyadmin-replica:
-    image: phpmyadmin:latest
-    environment:
-      PMA_HOST: dbreplica
-      PMA_USER: "${MYSQL_USER}"
-      PMA_PASSWORD: "${MYSQL_PASSWORD}"
-      PMA_ARBITRARY: 1
+      - mysql-network
     ports:
       - "8081:80"
-    depends_on:
-      - dbreplica
-    networks:
-      - database_network
-  app:
-    build: .
-    restart: always
-    depends_on:
-      - dbmaster
-    ports:
-      - "3003:3000"
-    networks:
-      - database_network
+
+  phpmyadmin2:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin2
     environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: "no"
-      MYSQL_RANDOM_ROOT_PASSWORD: "no"
-      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
-      DB_HOST: dbmaster
-      DB_PORT: "${DOCKER_SQL_PORT}"
-      DB_USER: "${MYSQL_USER}"
-      DB_PASSWORD: "${MYSQL_PASSWORD}"
-      DB_NAME: "${MYSQL_DATABASE}"
+      PMA_HOST:  dbreplica
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: root
+    networks:
+      - mysql-network
+    ports:
+      - "8082:80"
+
+  app1:  # Instancia 1 de la app
+    container_name: app1
+    build: .
+    environment:
+      - MYSQL_HOST=dbmaster
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_DB=chatapp
+      - MYSQL_PORT=3306
+    networks:
+      - app-network
+
+  app2:  # Instancia 2 de la app
+    container_name: app2
+    build: .
+    environment:
+      - MYSQL_HOST=dbmaster
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_DB=chatapp
+      - MYSQL_PORT=3306
+    networks:
+      - app-network
+
+  nginx_server:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "8084:80"
+    networks:
+      - app-network
+    depends_on:
+      - app1
+      - app2
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+
 
 networks:
-  database_network:
+  mysql-network:
     driver: bridge
-
-volumes:
-  mysql_master_data:
-    driver: local
-  mysql_slave_data:
-    driver: local
+  app-network:
+    driver: bridge

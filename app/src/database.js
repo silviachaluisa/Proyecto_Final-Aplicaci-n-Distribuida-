@@ -11,9 +11,8 @@ const sequelize = new Sequelize(
     process.env.MYSQL_PASSWORD,
     {
         dialect: 'mysql',
-        host: process.env.MYSQL_HOST || 'dbmaster',
-        port: process.env.DOCKER_SQL_PORT || 3306
-    }
+        host: process.env.MYSQL_HOST || 'localhost',
+        port: process.env.DOCKER_SQL_PORT || 3306    }
 );
 
 // Probar la conexión a la base de datos

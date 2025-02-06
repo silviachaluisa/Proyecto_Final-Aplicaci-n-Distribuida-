@@ -42,42 +42,50 @@ function verifyInputs(){
 }
 
 function showNotification(errors, type) {
-    // Notificaciones del servidor
     let notiDIV = document.getElementById('notification');
     let notiIcoDIV = document.getElementById('notification-icon-container');
     let notiIcon = document.getElementById('notification-icon');
     let notiText = document.getElementById('notification-message');
 
-    let color = type === 'error' ? 'red' : type === 'success' ? 'blue' : 'orange';
-    let icon = type === 'error' ? 'fa-times-circle' : type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+    const colorClasses = {
+        error: { bg: 'bg-red-500', border: 'border-red-700', iconBg: 'bg-red-900', icon: 'fa-times-circle' },
+        success: { bg: 'bg-blue-500', border: 'border-blue-700', iconBg: 'bg-blue-900', icon: 'fa-check-circle' },
+        warning: { bg: 'bg-orange-500', border: 'border-orange-700', iconBg: 'bg-orange-900', icon: 'fa-exclamation-circle' }
+    };
+
+    let { bg, border, iconBg, icon } = colorClasses[type] || colorClasses.warning;
 
     if (!Array.isArray(errors)) {
-        errors = [errors]; // Convertimos a array si no lo es
+        errors = [errors];
     }
 
     let index = 0;
 
     function showNextError() {
-        if (index >= errors.length) return; // Si no hay más errores, detener
+        if (index >= errors.length) return;
 
-        notiDIV.classList.add(`bg-${color}-500`, `border-${color}-700`);
-        notiText.textContent = errors[index]?.msg || errors[index];
-        notiIcoDIV.classList.add(`bg-${color}-900`);
+        // Limpiar clases previas antes de agregar las nuevas
+        notiDIV.classList.remove('bg-red-500', 'border-red-700', 'bg-blue-500', 'border-blue-700', 'bg-orange-500', 'border-orange-700');
+        notiIcoDIV.classList.remove('bg-red-900', 'bg-blue-900', 'bg-orange-900');
+        notiIcon.classList.remove('fa-times-circle', 'fa-check-circle', 'fa-exclamation-circle');
+
+        // Agregar nuevas clases
+        notiDIV.classList.add(bg, border);
+        notiIcoDIV.classList.add(iconBg);
         notiIcon.classList.add(icon);
+        notiText.textContent = errors[index]?.msg || errors[index];
+
         notiDIV.classList.remove("hidden");
 
         setTimeout(() => {
             notiDIV.classList.add("hidden");
-            notiDIV.classList.remove(`bg-${color}-500`, `border-${color}-700`);
-            notiIcoDIV.classList.remove(`bg-${color}-900`);
-            notiIcon.classList.remove(icon);
-            
-            index++; // Pasar al siguiente error
-            showNextError(); // Llamar a la función nuevamente después de ocultar
-        }, 3000); // Cada error se mostrará durante 3 segundos
+
+            index++; 
+            showNextError();
+        }, 3000);
     }
 
-    showNextError(); // Iniciar la secuencia
+    showNextError();
 }
 
 const registerButton = document.getElementById("register-btn");

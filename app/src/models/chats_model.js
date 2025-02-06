@@ -1,6 +1,6 @@
 import pkg from 'sequelize';
 const { DataTypes } = pkg;
-import sequelize from '../database.js';
+import sequelize from '../config/database.js';
 
 // Crear el modelo de la tabla 'chats'
 const Chat = sequelize.define('chats', {
@@ -13,10 +13,18 @@ const Chat = sequelize.define('chats', {
         type: DataTypes.BOOLEAN,
         defaultValue: false
     },
+    is_public: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+    },
     name: {
         type: DataTypes.STRING(30),
         allowNull: false,
         unique: true
+    },
+    owner: {
+        type: DataTypes.INTEGER,
+        allowNull: false
     },
     createdAt: {
         type: DataTypes.DATE,

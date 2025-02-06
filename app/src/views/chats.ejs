@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/css/styles.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>InstaMessage</title>
+    <script src="/socket.io/socket.io.js"></script> <!-- Cliente Socket.io -->
+</head>
+
+<header class="w-full bg-gray-500 dark:bg-gray-800 fixed top-0 z-10 px-4 sm:px-6 md:px-8">
+    <nav class="bg-gray-500 dark:bg-gray-800 w-full shadow-lg rounded-lg">
+        <div class="max-w-4xl mx-auto flex items-center justify-between h-16">
+            <a href="/" class="text-white hover:text-gray-300 font-bold text-lg">InstaMessage</a>
+            
+            <div class="hidden md:flex items-center space-x-4">
+                <a href="/view/profile" class="text-white hover:text-gray-300 font-semibold">
+                    <i class="fa-solid fa-user text-xl"></i>
+                    <span class="ml-2" id="profile-name">Perfil</span>
+                </a>
+                <a id="logout" class="text-red-500 hover:text-red-700 font-semibold cursor-pointer">Cerrar sesión</a>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<body class="bg-gray-100 dark:bg-gray-900 flex flex-col items-center justify-center h-screen">
+    <!-- Banner de notificaciones -->
+    <div id="notification" class="fixed top-18 flex m-2 text-white rounded-lg shadow-lg hidden">
+        <div id="notification-icon-container" class="h-full w-12 flex items-center justify-center rounded-l-lg p-6">
+            <i id="notification-icon" class="text-3xl fa-solid"></i>
+        </div>
+        <div class="flex items-center justify-center p-6 font-bold w-fit-content">
+            <p id="notification-message"></p>
+        </div>
+    </div>
+    <div class="w-full flex flex-col md:flex-row gap-4 max-w-7xl mt-16 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md h-screen md:h-5/6">
+        <div class="w-full md:w-4/12 lg:w-4/12 flex flex-col items-start justify-start border-r border-gray-300 dark:border-gray-700 p-4 overflow-y-auto">
+            <h1 class="text-3xl font-semibold text-center text-gray-800 dark:text-white mb-6">
+                Lista de <span class="text-blue-500 uppercase">chats</span>
+            </h1>
+            
+            <div class="relative w-full flex items-center justify-center">
+                <input type="text" placeholder="Buscar chat" class="w-full p-3 border rounded-lg dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <i class="fa-solid fa-search absolute right-5 top-4 text-gray-500 dark:text-gray-300"></i>
+            </div>
+            
+            <div class="flex flex-row gap-4 mt-4 justify-center items-center">
+                <div id="newChatBtn" class="flex items-center justify-center bg-gray-300 rounded-lg p-4 cursor-pointer hover:bg-gray-400 w-10 h-10">
+                    <i class="fa-solid fa-plus text-center text-black text-xl"></i>
+                </div>
+                <div id="refresh" class="flex items-center justify-center bg-gray-300 rounded-lg p-4 cursor-pointer hover:bg-gray-400 w-10 h-10">
+                    <i class="fa-solid fa-rotate-right text-center text-black text-xl"></i>
+                </div>
+            </div>
+            <div id="chats-container" class="flex flex-col gap-4 mt-4 w-full justify-center items-center">
+                <!-- Aquí se insertarán los chats -->
+            </div>
+        </div>
+        
+        <div class="w-full md:w-8/12 lg:w-9/12 flex flex-col items-center justify-center p-4 h-full" id="chat-container">
+            <div class="flex flex-col items-center justify-center text-center max-w-md">
+                <div class="flex items-center justify-center bg-gray-300 rounded-lg p-4 cursor-pointer hover:bg-gray-400 w-16 h-16">
+                    <i class="fa-solid fa-comments text-3xl text-black"></i>
+                </div>
+                <h1 class="text-3xl font-semibold text-gray-800 dark:text-white mt-4">
+                    Accede a un <span class="text-blue-500 uppercase">chat</span>
+                </h1>
+                <p class="text-gray-600 dark:text-white mt-2">
+                    Para acceder a un chat, selecciona uno de la lista de chats a la izquierda.
+                </p>
+            </div>
+        </div>
+    </div>
+    <!-- Funcionalidades pendientes para el chat
+     1) Listar usuarios del chat
+     2) Permitir unir a usuarios al chat
+     3) Boton para elminar chat
+     4) Funcionalidad a la barra de busqueda
+     5) En grupos pubicos, cambiar la vista para mostrar un boton para unirse al chat
+     -->
+
+    <!-- Modal para la creación de un nuevo chat -->
+    <div id="newChatModal" class="fixed inset-0 bg-gray-900 bg-opacity-60 flex flex-col items-center justify-center transition-opacity duration-300 hidden">
+        <div class="bg-white dark:bg-gray-800 w-full max-w-md p-6 rounded-lg shadow-xl transform transition-all scale-95">
+            <!-- Encabezado -->
+            <div class="flex items-center justify-between border-b pb-3">
+                <h1 class="text-2xl font-semibold text-gray-800 dark:text-white">Nuevo chat</h1>
+                <button id="close-modal" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-xl" onclick="closeNewChatModal()">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Contenido del modal -->
+            <div class="mt-4 space-y-4">
+                <input type="text" id="chat-name" placeholder="Nombre del chat"
+                    class="w-full p-3 border rounded-lg dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" id="is-group" class="cursor-pointer w-5 h-5 accent-blue-500">
+                    <label for="is-group" class="text-gray-800 dark:text-white cursor-pointer">Es un grupo</label>
+                </div>
+                
+                <div class="flex items-center gap-2 hidden" id="group-public">
+                    <input type="checkbox" id="is-public" class="cursor-pointer w-5 h-5 accent-blue-500">
+                    <label for="is-public" class="text-gray-800 dark:text-white cursor-pointer">Es publico</label>
+                </div>
+
+                <div id="users-container" class="flex flex-col gap-2">
+                    <!-- Aquí se insertarán los usuarios -->
+                </div>
+
+                <button id="create-chat" class="w-full p-3 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+                    Crear chat
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para listar los usuarios de un chat -->
+    <div id="usersModal" class="fixed inset-0 bg-gray-900 bg-opacity-60 flex flex-col items-center justify-center transition-opacity duration-300 hidden">
+        <div class="bg-white dark:bg-gray-800 w-full max-w-md p-6 rounded-lg shadow-xl transform transition-all scale-95">
+            <!-- Encabezado -->
+            <div class="flex items-center justify-between border-b pb-3">
+                <h1 class="text-2xl font-semibold text-gray-800 dark:text-white">Usuarios del chat</h1>
+                <button id="close-users-modal" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-xl" onclick="closeListUsersModal()">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Contenido del modal -->
+            <div class="mt-4 space-y-4">
+                <div id="users-list" class="flex flex-col gap-2">
+                    <!-- Aquí se insertarán los usuarios -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/js/chatsView.js"></script>
+</body>
+</html>

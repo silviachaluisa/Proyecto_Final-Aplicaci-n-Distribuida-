@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/css/styles.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>Inicio de sesion</title>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 flex flex-col items-center justify-center h-screen">
+
+    <!-- Banner de notificaciones -->
+    <div id="notification" class="flex m-8 text-white rounded-lg shadow-lg hidden">
+        <div id="notification-icon-container" class="h-full w-12 flex items-center justify-center rounded-l-lg p-6">
+            <i id="notification-icon" class="text-3xl fa-solid"></i>
+        </div>
+        <div class="flex items-center justify-center p-6 font-bold">
+            <p id="notification-message"></p>
+        </div>
+    </div>
+
+    <div class="w-full max-w-md p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+        <h1 class="text-3xl font-semibold text-center text-gray-800 dark:text-white mb-6">
+            Te damos la bienvenida a <span class="text-blue-500 uppercase">Instamessage</span>
+        </h1>
+        <form id="login-form" class="space-y-4">
+            <input type="email" id="email" name="email" placeholder="Correo"
+                class="w-full p-3 border rounded-lg dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+            
+            <div class="relative">
+                <input type="password" name="password" id="password" placeholder="Contraseña"
+                    class="w-full p-3 border rounded-lg dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <i id="toggle-pass" class="fa fa-eye absolute right-4 top-5 cursor-pointer text-gray-500 dark:text-gray-300"></i>
+            </div>
+
+            <button
+                id="login-btn"
+                class="w-full bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition cursor-not-allowed" disabled>
+                Iniciar sesión
+            </button>
+            
+            <div class="w-full h-2 bg-gray-500 rounded-full overflow-hidden">
+                <div class="h-full bg-blue-500 rounded-full transition-all duration-300" style="width: 0%;"></div>
+            </div>
+            <p class="dark:text-white text-center">No tienes cuenta, <a href="/view/register" class="text-blue-500 font-bold">Regístrate</a></p>
+        </form>
+    </div>
+
+    <script src="/js/loginView.js"></script>
+</body>
+</html>

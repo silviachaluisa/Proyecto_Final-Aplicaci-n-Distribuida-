@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getChats, getChatUsers, createChat, joinChat, updateChat, leaveChat, deleteChat } from "../controllers/chats_controller.js";
+import { getChats, getChatUsers, createChat, joinChat, inviteToChat, updateChat, leaveChat, deleteChat } from "../controllers/chats_controller.js";
 import { chatValidator } from "../middlewares/chats_validator.js";
 import auth from "../middlewares/auth.js";
 
@@ -11,11 +11,14 @@ router.route("/create-chat")
 router.route("/join-chat/:chat_id")
     .post(auth, joinChat); // Ruta para unirse a un chat (POST /api/v1/chat/join)
 
+router.route("/invite-user/:chat_id")
+    .post(auth, inviteToChat); // Ruta para invitar a un chat (POST /api/v1/chat/invite)
+
 router.route("/leave-chat")
     .post(auth, leaveChat); // Ruta para salir de un chat (POST /api/v1/chat/leave)
 
 router.route("/chats")
-    .get(auth, getChats); // Ruta para obtener todos los chats (GET /api/v1/chat)
+    .get(auth, getChats); // Ruta para obtener todos los chats (GET /api/v1/chats)
 
 router.route("/chat-users/:chat_id")
     .get(auth, getChatUsers); // Ruta para obtener todos los usuarios de un chat por su ID (GET /api/v1/chat-users/:id)

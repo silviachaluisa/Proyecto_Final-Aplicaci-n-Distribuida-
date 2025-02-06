@@ -1,12 +1,20 @@
-FROM node:16
+# Usa una imagen oficial de Node.js
+FROM node:18
 
-WORKDIR /app 
+# Establece el directorio de trabajo dentro del contenedor
+WORKDIR /app
 
-COPY package*.json ./  
-RUN npm install
+# Copia solo package.json y package-lock.json primero para aprovechar caché
+COPY package*.json ./
 
-COPY . .  
+# Instala dependencias dentro del contenedor sin copiar node_modules del host
+RUN npm install --only=production
 
+# Copia el resto del código después de instalar dependencias
+COPY . .
+
+# Expone el puerto de la aplicación
 EXPOSE 3000
 
-CMD ["npm", "start"]
+# Comando para ejecutar la aplicación
+CMD ["node", "src/index.js"]

@@ -53,6 +53,10 @@ app.get('/view/chats', (req, res) => {
     res.render('chats');
 });
 
+app.get('/view/profile', (req, res) => {
+    res.render('profile');
+});
+
 // Rutas de usuarios
 app.use('/api/v1', userRouter);
 app.use('/api/v1', chatsRouter);

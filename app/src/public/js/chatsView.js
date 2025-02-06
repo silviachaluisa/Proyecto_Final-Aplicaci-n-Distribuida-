@@ -123,6 +123,7 @@ async function getMessagesChat(chatInfo) {
         return;
     }
     const chatsContainer = document.getElementById('chat-container');
+    chatsContainer.scrollIntoView({ behavior: 'smooth' });
 
     try {
         chatsContainer.innerHTML = ''; // Limpiar contenido previo
@@ -161,6 +162,9 @@ async function getMessagesChat(chatInfo) {
                 </div>
             `;
             chatsContainer.appendChild(chatHeader);
+
+            // Dar funcionalidad a los botones de la cabecera
+            chatHeader.querySelector('button:last-child').addEventListener('click', handleCloseChat);
 
             // Mostrar los mensajes en el chat
             const divMessages = document.createElement('div');
@@ -284,6 +288,23 @@ async function sendMessage(chatId, content) {
         console.error("Error al enviar el mensaje:", error);
         showNotification('Error al enviar el mensaje', 'error');
     }
+}
+
+function handleCloseChat() {
+    const chatContainer = document.getElementById('chat-container');
+    chatContainer.innerHTML = `
+    <div class="flex flex-col items-center justify-center text-center max-w-md">
+        <div class="flex items-center justify-center bg-gray-300 rounded-lg p-4 cursor-pointer hover:bg-gray-400 w-16 h-16">
+            <i class="fa-solid fa-comments text-3xl text-black"></i>
+        </div>
+        <h1 class="text-3xl font-semibold text-gray-800 dark:text-white mt-4">
+            Accede a un <span class="text-blue-500 uppercase">chat</span>
+        </h1>
+        <p class="text-gray-600 dark:text-white mt-2">
+            Para acceder a un chat, selecciona uno de la lista de chats a la izquierda.
+        </p>
+    </div>
+    `;
 }
 
 function openNewChatModal() {

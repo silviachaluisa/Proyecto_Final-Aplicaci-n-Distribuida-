@@ -87,15 +87,22 @@ async function getChats() {
         // Agregar los chats cargados
         chats.forEach(chat => {
             const chatElement = document.createElement('div');
-            chatElement.classList.add('flex', 'items-center', 'justify-eventy', 'w-full', 'p-4', 'border-b', 'rounded-lg', 
+            chatElement.classList.add('flex', 'items-center', 'justify-eventy', 'w-full', 'p-3', 'border-b', 'rounded-lg', 
                                       'border-gray-300', 'dark:border-gray-100', 'dark:bg-gray-700', 
-                                      'hover:bg-slate-800', 'dark:hover:bg-slate-800', 'cursor-pointer', "mr-4");
+                                      'hover:bg-slate-800', 'dark:hover:bg-slate-800', 'cursor-pointer', "transition", "duration-300");
 
             chatElement.innerHTML = `
-                <div class="w-14 h-14 bg-gray-300 dark:bg-slate-800 rounded-full flex items-center justify-center border-2 border-gray-300 dark:border-gray-900">
-                    <i class="fa-solid ${chat.is_group ? "fa-user-group" : "fa-user"} text-gray-500 dark:text-gray-300 text-3xl"></i>
+                <div class="w-14 h-12 bg-gray-300 dark:bg-slate-800 rounded-full flex items-center justify-center border-2 border-gray-300 dark:border-gray-900">
+                    <i class="fa-solid ${chat.is_group ? "fa-user-group" : "fa-user"} text-gray-500 dark:text-gray-300 text-2xl"></i>
                 </div>
-                <p class="text-gray-800 dark:text-white font-semibold ml-4">${chat.name}</p>
+                <div class="flex flex-col items-start justify-center w-full ml-4">
+                    <p class="text-gray-800 dark:text-white font-semibold">${chat.name}</p>
+                    <div class="flex items-end justify-between w-full">
+                        <small class="text-gray-500 dark:text-gray-400">${chat.ownerUser.name}</small>
+                        ${chat.is_group ? `<small class='text-gray-500 dark:text-gray-400'>${chat.nUsers} Usuarios</small>` : ""}
+                        <small class="text-gray-500 dark:text-gray-400">${chat.is_group ? "Grupo" : "Chat"} ${chat.is_public ? "publico" : "privado"}</small>
+                    </div>
+                </div>
             `;
             chatsContainer.appendChild(chatElement);
         });
@@ -104,6 +111,10 @@ async function getChats() {
         console.error("Error al obtener los chats:", error);
         chatsContainer.innerHTML = `<p class="text-red-500 font-semibold">Error al cargar los chats.</p>`;
     }
+}
+
+async function getChat(params) {
+    
 }
 
 function openNewChatModal() {
@@ -124,6 +135,7 @@ function handleLogout() {
 const handleCreateChat = async () => {
     const chatName = document.getElementById('chat-name').value;
     const isGroup = document.getElementById('is-group').checked;
+    const isPublic = document.getElementById('is-public').checked;
 
     if (!chatName) {
         showNotification('Debes ingresar un nombre para el chat', 'error');
@@ -137,7 +149,7 @@ const handleCreateChat = async () => {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
             },
-            body: JSON.stringify({ name: chatName, is_group: isGroup })
+            body: JSON.stringify({ name: chatName, is_group: isGroup, is_public: isPublic })
         });
 
         if (response.ok) {
@@ -179,6 +191,17 @@ document.getElementById('refresh').addEventListener('click', getChats);
 document.getElementById('logout').addEventListener('click', handleLogout);
 document.getElementById('create-chat').addEventListener('click', handleCreateChat);
 
+document.getElementById('is-group').addEventListener('change', function () {
+    const isGroup = this.checked;
+    const GroupPublic = document.getElementById('group-public');
+    GroupPublic.classList.toggle('hidden', !isGroup);
+
+    const isPublic = document.getElementById('is-public');
+    if (!isGroup) {
+        isPublic.checked = false;
+    }
+});
+
 document.addEventListener("DOMContentLoaded", async function () {
     const token = localStorage.getItem("token");
     const currentPath = window.location.pathname;
@@ -186,7 +209,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     if (token) {
         try {
             const response = await fetch("/api/v1/user", {
-                headers: { Authorization: `Bearer ${token}` },
+                headers: { 
+                    Authorization: `Bearer ${token}`
+                },
                 method: "GET",
             });
 
@@ -204,7 +229,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 window.location.href = "/view/chats";
             }
         } catch (error) {
-            console.error("Error al verificar autenticación:", error);
+            console.error("Error al verificar autenticación:", error.message);
             window.location.href = '/';
         }
     } else {

@@ -1,6 +1,6 @@
 import pkg from 'sequelize';
 const { DataTypes } = pkg;
-import sequelize from '../database.js';
+import sequelize from '../config/database.js';
 
 // Crear el modelo de la tabla 'messages'
 const Messages = sequelize.define('messages', {

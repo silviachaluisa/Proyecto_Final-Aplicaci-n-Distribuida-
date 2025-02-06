@@ -82,6 +82,12 @@ io.on('connection', (socket) => {
         io.emit('new chat', chat);
     });
 
+    // Escuchar el evento 'join chat'
+    // socket.on('join chat', (chat) => {
+    //     console.log('Usuario unido al chat:', chat);
+    //     socket.join(chat);
+    // });
+
     socket.on('disconnect', () => {
         console.log('Usuario desconectado:', socket.id);
     });

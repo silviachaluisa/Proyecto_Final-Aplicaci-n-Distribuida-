@@ -12,6 +12,7 @@ CREATE TABLE `users` (
 CREATE TABLE `chats` (
   `id` INTEGER NOT NULL AUTO_INCREMENT COMMENT 'ID auto incremental del chat o conversación',
   `is_group` BOOLEAN DEFAULT false COMMENT 'Determina si el chat es grupal (true) o individual (false)',
+  `is_public` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Determina si un chat es público o privado ',
   `name` VARCHAR(30) NOT NULL UNIQUE COMMENT 'Nombre del chat; en chats grupales es obligatorio y único',
   `owner` INTEGER NOT NULL COMMENT 'ID del usuario que creó el chat (clave foránea a users)',
   `createdAt` DATETIME NOT NULL COMMENT 'Fecha y hora en que se creó el chat',

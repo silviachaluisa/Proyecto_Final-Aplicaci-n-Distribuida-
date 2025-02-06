@@ -1,5 +1,4 @@
-import MessagesModel from "../models/messages_model.js";
-import ChatUsersModel from "../models/chat_users_model.js";
+import { Chat, User, ChatUsers, Messages } from "../config/associations.js";
 
 export const getMessages = async (req, res) => {
     try {
@@ -9,21 +8,26 @@ export const getMessages = async (req, res) => {
             return res.status(400).json({ message: "Faltan campos por llenar" });
         }
 
-        const chat = await ChatUsersModel.findOne({ where: { chat_id, user_id: req.uid } });
+        const chat = await ChatUsers.findOne({ 
+            where: { chat_id, user_id: req.uid }
+        });
         if (!chat) {
             return res.status(400).json({ message: "No estás en ese chat" });
         }
 
-        const messages = await MessagesModel.findAll({ where: { chat_id } });
+        const messages = await Messages.findAll({
+            where: { chat_id },
+            include: [{ model: User, as: "sender", attributes: ["id", "name"] }],
+        });
 
         // Marcar los mensajes como leídos por el usuario actual
-        messages.forEach(async message => {
+        for (const message of messages) {
             const readby = JSON.parse(message.readby);
             if (!readby.includes(req.uid)) {
                 readby.push(req.uid);
                 await message.update({ readby: JSON.stringify(readby) });
             }
-        });
+        }
 
         res.json(messages);
     } catch (error) {
@@ -41,12 +45,12 @@ export const sendMessage = async (req, res) => {
             return res.status(400).json({ message: "Faltan campos por llenar" });
         }
 
-        const chat = await ChatUsersModel.findOne({ where: { chat_id, user_id: req.uid } });
+        const chat = await ChatUsers.findOne({ where: { chat_id, user_id: req.uid } });
         if (!chat) {
             return res.status(400).json({ message: "No estás en ese chat" });
         }
 
-        await MessagesModel.create({ chat_id, user_id: req.uid, content, readby: JSON.stringify([req.uid]) });
+        await Messages.create({ chat_id, user_id: req.uid, content, readby: JSON.stringify([req.uid]) });
         res.json({ message: "Mensaje enviado" });
     } catch (error) {
         console.error(error);
@@ -63,7 +67,7 @@ export const editMessage = async (req, res) => {
             return res.status(400).json({ message: "Faltan campos por llenar" });
         }
 
-        const message = await MessagesModel.findOne({ where: { id: message_id } });
+        const message = await Messages.findOne({ where: { id: message_id } });
         if (!message) {
             return res.status(404).json({ message: "Mensaje no encontrado" });
         }
@@ -88,7 +92,7 @@ export const readMessage = async (req, res) => {
             return res.status(400).json({ message: "Faltan campos por llenar" });
         }
 
-        const message = await MessagesModel.findOne({ where: { id: message_id } });
+        const message = await Messages.findOne({ where: { id: message_id } });
         if (!message) {
             return res.status(404).json({ message: "Mensaje no encontrado" });
         }
@@ -115,7 +119,7 @@ export const deleteMessage = async (req, res) => {
             return res.status(400).json({ message: "Faltan campos por llenar" });
         }
 
-        const message = await MessagesModel.findOne({ where: { id: message_id } });
+        const message = await Messages.findOne({ where: { id: message_id } });
         if (!message) {
             return res.status(404).json({ message: "Mensaje no encontrado" });
         }

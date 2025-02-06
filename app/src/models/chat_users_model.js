@@ -1,6 +1,6 @@
 import pkg from 'sequelize';
 const { DataTypes } = pkg;
-import sequelize from '../database.js';
+import sequelize from '../config/database.js';
 
 // Crear el modelo de la tabla 'chat_users'
 const ChatUsers = sequelize.define('chats_users', {

@@ -87,15 +87,26 @@ async function getChats() {
         // Agregar los chats cargados
         chats.forEach(chat => {
             const chatElement = document.createElement('div');
-            chatElement.classList.add('flex', 'items-center', 'justify-eventy', 'w-full', 'p-4', 'border-b', 'rounded-lg', 
+            chatElement.classList.add('flex', 'items-center', 'justify-eventy', 'w-full', 'p-3', 'border-b', 'rounded-lg', 
                                       'border-gray-300', 'dark:border-gray-100', 'dark:bg-gray-700', 
-                                      'hover:bg-slate-800', 'dark:hover:bg-slate-800', 'cursor-pointer', "mr-4");
+                                      'hover:bg-slate-800', 'dark:hover:bg-slate-800', 'cursor-pointer', "transition", "duration-300");
+            
+            chatElement.addEventListener('click', () => {
+                getMessagesChat(chat.id); // Obtener los mensajes del chat
+            });
 
             chatElement.innerHTML = `
-                <div class="w-14 h-14 bg-gray-300 dark:bg-slate-800 rounded-full flex items-center justify-center border-2 border-gray-300 dark:border-gray-900">
-                    <i class="fa-solid ${chat.is_group ? "fa-user-group" : "fa-user"} text-gray-500 dark:text-gray-300 text-3xl"></i>
+                <div class="w-14 h-12 bg-gray-300 dark:bg-slate-800 rounded-full flex items-center justify-center border-2 border-gray-300 dark:border-gray-900">
+                    <i class="fa-solid ${chat.is_group ? "fa-user-group" : "fa-user"} text-gray-500 dark:text-gray-300 text-2xl"></i>
                 </div>
-                <p class="text-gray-800 dark:text-white font-semibold ml-4">${chat.name}</p>
+                <div class="flex flex-col items-start justify-center w-full ml-4">
+                    <p class="text-gray-800 dark:text-white font-semibold">${chat.name}</p>
+                    <div class="flex flex-col md:flex-row items-end justify-between w-full">
+                        <small class="text-gray-500 dark:text-gray-400">${chat.ownerUser.name}</small>
+                        ${chat.is_group ? `<small class='text-gray-500 dark:text-gray-400'>${chat.nUsers} Usuarios</small>` : ""}
+                        <small class="text-gray-500 dark:text-gray-400">${chat.is_group ? "Grupo" : "Chat"} ${chat.is_public ? "publico" : "privado"}</small>
+                    </div>
+                </div>
             `;
             chatsContainer.appendChild(chatElement);
         });
@@ -103,6 +114,84 @@ async function getChats() {
     } catch (error) {
         console.error("Error al obtener los chats:", error);
         chatsContainer.innerHTML = `<p class="text-red-500 font-semibold">Error al cargar los chats.</p>`;
+    }
+}
+
+async function getMessagesChat(chatId) {
+    if (!chatId) {
+        showNotification('No se ha seleccionado un chat', 'error');
+        return;
+    }
+    const chatsContainer = document.getElementById('chat-container');
+
+    try {
+        chatsContainer.innerHTML = ''; // Limpiar contenido previo
+
+        const response = await fetch(`/api/v1/messages/${chatId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+
+        if (response.ok) {
+            const messages = await response.json();
+            console.log("Mensajes:", messages);
+
+            const currentUserID = localStorage.getItem('uid');
+            // Mostrar los mensajes en el chat
+            const divMessages = document.createElement('div');
+            divMessages.classList.add('flex', 'flex-col', 'items-start', 'justify-start', 'w-full', 'h-full', 'p-4', 'gap-4', 'overflow-y-auto');
+
+            messages.forEach(message => {
+                if (message.sender.id === parseInt(currentUserID)) {
+                    const divMessage = document.createElement('div');
+                    divMessage.classList.add('flex', 'flex-col', 'items-end', 'justify-start', 'w-full', 'p-2');
+
+                    divMessage.innerHTML = `
+                    <div class="bg-blue-500 dark:bg-blue-700 p-3 rounded-tr-lg rounded-tl-lg rounded-bl-lg text-white">
+                        <p class="text-white font-semibold">${message.sender.name}</p>
+                        <p class="text-white">${message.content}</p>
+                    </div>
+                    `;
+                    divMessages.appendChild(divMessage);
+                    return;
+                } 
+
+                const divMessage = document.createElement('div');
+                divMessage.classList.add('fixed', 'bottom-0', 'flex', 'flex-col', 'items-start', 'justify-start', 'w-full', 'p-2');
+
+                divMessage.innerHTML = `
+                    <div class="bg-gray-300 dark:bg-gray-700 p-3 rounded-tr-lg rounded-tl-lg rounded-br-lg text-gray-800 dark:text-white">
+                        <p class="text-gray-800 dark:text-white font-semibold">${message.sender.name}</p>
+                        <p class="text-gray-600 dark:text-gray-300">${message.content}</p>
+                    </div>
+                `;
+                divMessages.appendChild(divMessage);
+            });
+
+            const divInput = document.createElement('div');
+            divInput.classList.add('flex', 'items-center', 'justify-between', 'w-full', 'p-2', 'bg-gray-500', 'dark:bg-gray-700', 'rounded-lg');
+
+            divInput.innerHTML = `
+                <input type="text" id="message-input" class="w-full p-2 m-2 bg-transparent dark:text-white" placeholder="Escribe un mensaje...">
+                <button id="send-message" class="bg-blue-500 dark:bg-blue-700 text-white p-2 rounded-lg">Enviar</button>
+            `;
+
+            chatsContainer.appendChild(divMessages);
+            chatsContainer.appendChild(divInput);
+        } else {
+            const data = await response.json();
+            showNotification(data.message, 'error');
+
+            chatsContainer.innerHTML = `<p class="text-red-500 font-semibold">Error al cargar los mensajes.</p>`;
+        }
+    } catch (error) {
+        console.error("Error al obtener los mensajes:", error.message);
+        showNotification('Error al obtener los mensajes', 'error');
+
+        chatsContainer.innerHTML = `<p class="text-red-500 font-semibold">Error al cargar los mensajes.</p>`;
     }
 }
 
@@ -118,12 +207,14 @@ function closeNewChatModal() {
 
 function handleLogout() {
     localStorage.removeItem('token');
+    localStorage.removeItem('uid');
     window.location.href = '/';
 }
 
 const handleCreateChat = async () => {
     const chatName = document.getElementById('chat-name').value;
     const isGroup = document.getElementById('is-group').checked;
+    const isPublic = document.getElementById('is-public').checked;
 
     if (!chatName) {
         showNotification('Debes ingresar un nombre para el chat', 'error');
@@ -137,7 +228,7 @@ const handleCreateChat = async () => {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
             },
-            body: JSON.stringify({ name: chatName, is_group: isGroup })
+            body: JSON.stringify({ name: chatName, is_group: isGroup, is_public: isPublic })
         });
 
         if (response.ok) {
@@ -179,6 +270,17 @@ document.getElementById('refresh').addEventListener('click', getChats);
 document.getElementById('logout').addEventListener('click', handleLogout);
 document.getElementById('create-chat').addEventListener('click', handleCreateChat);
 
+document.getElementById('is-group').addEventListener('change', function () {
+    const isGroup = this.checked;
+    const GroupPublic = document.getElementById('group-public');
+    GroupPublic.classList.toggle('hidden', !isGroup);
+
+    const isPublic = document.getElementById('is-public');
+    if (!isGroup) {
+        isPublic.checked = false;
+    }
+});
+
 document.addEventListener("DOMContentLoaded", async function () {
     const token = localStorage.getItem("token");
     const currentPath = window.location.pathname;
@@ -186,25 +288,31 @@ document.addEventListener("DOMContentLoaded", async function () {
     if (token) {
         try {
             const response = await fetch("/api/v1/user", {
-                headers: { Authorization: `Bearer ${token}` },
+                headers: { 
+                    Authorization: `Bearer ${token}`
+                },
                 method: "GET",
             });
 
             if (!response.ok) {
                 localStorage.removeItem("token");
+                localStorage.removeItem("uid");
                 window.location.href = '/';
                 return;
             }
 
             const profile = await response.json();
             document.getElementById('profile-name').textContent = profile.name;
+            localStorage.setItem('uid', profile.id);
 
             // Solo redirige si NO estamos ya en /view/chats
             if (currentPath !== "/view/chats") {
                 window.location.href = "/view/chats";
             }
         } catch (error) {
-            console.error("Error al verificar autenticación:", error);
+            console.error("Error al verificar autenticación:", error.message);
+            localStorage.removeItem("token");
+            localStorage.removeItem("uid");
             window.location.href = '/';
         }
     } else {

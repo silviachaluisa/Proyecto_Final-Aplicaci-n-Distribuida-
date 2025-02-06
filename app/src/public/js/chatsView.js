@@ -173,7 +173,7 @@ async function getMessagesChat(chatId) {
 
             // Si no hay mensajes, mostrar mensaje
             if (messages.length === 0) {
-                divMessages.innerHTML = `<p class="text-gray-500 font-semibold">No hay mensajes en este chat.</p>`;
+                divMessages.innerHTML = `<p class="text-gray-500 font-semibold w-full h-full">No hay mensajes en este chat.</p>`;
             }
 
             // Crear el input para enviar mensajes
@@ -182,8 +182,42 @@ async function getMessagesChat(chatId) {
 
             divInput.innerHTML = `
                 <input type="text" id="message-input" class="w-full p-2 m-2 bg-transparent dark:text-white" placeholder="Escribe un mensaje...">
-                <button id="send-message" class="bg-blue-500 dark:bg-blue-700 text-white p-2 rounded-lg">Enviar</button>
+                <button id="send-message" class="bg-blue-500 dark:bg-blue-700 text-white rounded-lg cursor-not-allowed" disabled>
+                    <span>
+                        <i class="fa-regular fa-paper-plane text-xl p-4 text-white"></i>
+                    </span>
+                </button>
             `;
+
+            const inputMessage = divInput.querySelector('#message-input');
+            inputMessage.addEventListener('input', () => {
+                // Si tiene contenido, habilitar el boton, de lo contrario, deshabilitarlo
+                const message = inputMessage.value;
+                const sendMessageBtn = divInput.querySelector('#send-message');
+                sendMessageBtn.disabled = !message;
+                sendMessageBtn.classList.toggle('cursor-not-allowed', !message);
+                sendMessageBtn.classList.toggle('cursor-pointer', message);
+            });
+
+            inputMessage.addEventListener('keypress', (event) => {
+                if (event.key === 'Enter' && !event.shiftKey) {
+                    if (!inputMessage.value) return;
+                    const sendMessageBtn = divInput.querySelector('#send-message');
+                    sendMessageBtn.click();
+                }
+            });
+
+            const sendMessageBtn = divInput.querySelector('#send-message');
+            sendMessageBtn.addEventListener('click', () => {
+                const messageInput = divInput.querySelector('#message-input');
+                sendMessage(chatId, messageInput.value);
+                messageInput.value = '';
+
+                // Deshabilitar el botón de enviar
+                sendMessageBtn.disabled = true;
+                sendMessageBtn.classList.add('cursor-not-allowed');
+                sendMessageBtn.classList.remove('cursor-pointer');
+            });
 
             chatsContainer.appendChild(divMessages);
             chatsContainer.appendChild(divInput);
@@ -198,6 +232,35 @@ async function getMessagesChat(chatId) {
         showNotification('Error al obtener los mensajes', 'error');
 
         chatsContainer.innerHTML = `<p class="text-red-500 font-semibold">Error al cargar los mensajes.</p>`;
+    }
+}
+
+async function sendMessage(chatId, content) {
+    if (!chatId || !content) {
+        showNotification('Debes ingresar un mensaje', 'error');
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/v1/send-message/${chatId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({ content })
+        });
+
+        if (response.ok) {
+            showNotification('Mensaje enviado', 'success');
+            getMessagesChat(chatId); // Actualizar los mensajes
+        } else {
+            const data = await response.json();
+            showNotification(data.message, 'error');
+        }
+    } catch (error) {
+        console.error("Error al enviar el mensaje:", error);
+        showNotification('Error al enviar el mensaje', 'error');
     }
 }
 

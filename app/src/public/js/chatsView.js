@@ -149,11 +149,13 @@ async function getMessagesChat(chatInfo) {
             chatHeader.innerHTML = `
                 <p class="text-white font-semibold">${chatInfo.name}</p>
                 <div class="flex items-center justify-between gap-4">
+                    ${chatInfo.is_group ? `
                     <button class="bg-gray-300 dark:bg-gray-400 text-white rounded-lg p-2 cursor-pointer">
                         <span>
                             <i class="fa-solid fa-user-group text-xl p-2 text-white"></i>
                         </span>
-                    </button>
+                    </button>` : ''}
+                    
                     <button class="bg-red-500 dark:bg-red-700 text-white rounded-lg p-2 cursor-pointer">
                         <span>
                             <i class="fa-solid fa-times text-xl p-2 text-white"></i>
@@ -165,6 +167,9 @@ async function getMessagesChat(chatInfo) {
 
             // Dar funcionalidad a los botones de la cabecera
             chatHeader.querySelector('button:last-child').addEventListener('click', handleCloseChat);
+            chatHeader.querySelector('button:first-child').addEventListener('click', () => {
+                inviteUserToChat(chatInfo.id, parseInt(localStorage.getItem('uid')));
+            });
 
             // Mostrar los mensajes en el chat
             const divMessages = document.createElement('div');
@@ -290,6 +295,35 @@ async function sendMessage(chatId, content) {
     }
 }
 
+async function inviteUserToChat(chatId, userId) {
+    if (!chatId || !userId) {
+        showNotification('Debes seleccionar un chat y un usuario', 'error');
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/v1/invite-user/${chatId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({ user_id: userId })
+        });
+
+        if (response.ok) {
+            showNotification('Usuario invitado al chat', 'success');
+            socket.emit('reload chats', { chat_id: chatId });
+        } else {
+            const data = await response.json();
+            showNotification(data.message, 'error');
+        }
+    } catch (error) {
+        console.error("Error al invitar al usuario:", error);
+        showNotification('Error al invitar al usuario', 'error');
+    }
+}
+
 function handleCloseChat() {
     const chatContainer = document.getElementById('chat-container');
     chatContainer.innerHTML = `
@@ -343,15 +377,12 @@ const handleCreateChat = async () => {
             body: JSON.stringify({ name: chatName, is_group: isGroup, is_public: isPublic })
         });
 
+        const data = await response.json();
+        closeNewChatModal();
         if (response.ok) {
             showNotification('Chat creado exitosamente', 'success');
-
-            setTimeout(() => {
-                closeNewChatModal();
-                socket.emit('create chat', { name: chatName, is_group: isGroup });
-            }, 3000);
+            socket.emit('reload chats', { name: chatName, is_group: isGroup });
         } else {
-            const data = await response.json();
             showNotification(data.message, 'error');
         }
 
@@ -367,7 +398,7 @@ socket.on("chat message", (data) => {
     console.log("Mensaje recibido:", data);
 });
 
-socket.on("new chat", (data) => {
+socket.on("reload chats", (data) => {
     console.log("Nuevo chat:", data);
 
     getChats(); // Actualizar la lista de chats

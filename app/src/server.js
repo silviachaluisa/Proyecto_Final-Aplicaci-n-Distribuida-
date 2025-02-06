@@ -81,16 +81,10 @@ io.on('connection', (socket) => {
     });
 
     // Escuchar el evento `create chat`
-    socket.on('create chat', (chat) => {
-        console.log('Chat creado:', chat.name);
-        io.emit('new chat', chat);
+    socket.on('reload chats', (chat) => {
+        console.log('Chat creado:', chat);
+        io.emit('reload chats', chat);
     });
-
-    // Escuchar el evento 'join chat'
-    // socket.on('join chat', (chat) => {
-    //     console.log('Usuario unido al chat:', chat);
-    //     socket.join(chat);
-    // });
 
     socket.on('disconnect', () => {
         console.log('Usuario desconectado:', socket.id);

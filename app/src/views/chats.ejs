@@ -27,14 +27,14 @@
 
 <body class="bg-gray-100 dark:bg-gray-900 flex flex-col items-center justify-center h-screen">
     <!-- Banner de notificaciones -->
-    <!-- <div id="notification" class="flex m-8 text-white rounded-lg shadow-lg hidden">
+    <div id="notification" class="fixed top-18 flex m-2 text-white rounded-lg shadow-lg hidden">
         <div id="notification-icon-container" class="h-full w-12 flex items-center justify-center rounded-l-lg p-6">
             <i id="notification-icon" class="text-3xl fa-solid"></i>
         </div>
         <div class="flex items-center justify-center p-6 font-bold w-fit-content">
             <p id="notification-message"></p>
         </div>
-    </div> -->
+    </div>
     <div class="w-full flex flex-col md:flex-row gap-4 max-w-7xl mt-16 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md h-screen md:h-5/6">
         <div class="w-full md:w-4/12 lg:w-4/12 flex flex-col items-start justify-start border-r border-gray-300 dark:border-gray-700 p-4 overflow-y-auto">
             <h1 class="text-3xl font-semibold text-center text-gray-800 dark:text-white mb-6">
@@ -73,18 +73,16 @@
             </div>
         </div>
     </div>
+    <!-- Funcionalidades pendientes para el chat
+     1) Listar usuarios del chat
+     2) Permitir unir a usuarios al chat
+     3) Boton para elminar chat
+     4) Funcionalidad a la barra de busqueda
+     5) En grupos pubicos, cambiar la vista para mostrar un boton para unirse al chat
+     -->
 
     <!-- Modal para la creación de un nuevo chat -->
     <div id="newChatModal" class="fixed inset-0 bg-gray-900 bg-opacity-60 flex flex-col items-center justify-center transition-opacity duration-300 hidden">
-        <!-- Banner de notificaciones -->
-        <div id="notification" class="flex m-8 text-white rounded-lg shadow-lg hidden">
-            <div id="notification-icon-container" class="h-full w-12 flex items-center justify-center rounded-l-lg p-6">
-                <i id="notification-icon" class="text-3xl fa-solid"></i>
-            </div>
-            <div class="flex items-center justify-center p-6 font-bold w-fit-content">
-                <p id="notification-message"></p>
-            </div>
-        </div>
         <div class="bg-white dark:bg-gray-800 w-full max-w-md p-6 rounded-lg shadow-xl transform transition-all scale-95">
             <!-- Encabezado -->
             <div class="flex items-center justify-between border-b pb-3">

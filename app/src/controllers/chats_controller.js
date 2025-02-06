@@ -66,6 +66,38 @@ export const joinChat = async (req, res) => {
     }
 };
 
+export const inviteToChat = async (req, res) => {
+    try {
+        const { chat_id } = req.params;
+        const { user_id } = req.body;
+
+        if (!chat_id || !user_id) {
+            return res.status(400).json({ message: "Faltan campos por llenar" });
+        }
+
+        // Verificar si el chat es grupal
+        const chat = await Chat.findOne({ where: { id: chat_id } });
+        if (!chat) {
+            return res.status(404).json({ message: "Chat no encontrado" });
+        }
+
+        if (!chat.is_group) {
+            return res.status(400).json({ message: `El chat '${chat.name}' no es un chat grupal` });
+        }
+
+        const existingUser = await ChatUsers.findOne({ where: { chat_id, user_id } });
+        if (existingUser) {
+            return res.status(400).json({ message: "El usuario ya está en el chat" });
+        }
+
+        await ChatUsers.create({ chat_id, user_id });
+        res.json({ message: "Usuario invitado al chat" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Ocurrió un error", error: error.message });
+    }
+};
+
 export const leaveChat = async (req, res) => {
     try {
         const { chat_id } = req.body;

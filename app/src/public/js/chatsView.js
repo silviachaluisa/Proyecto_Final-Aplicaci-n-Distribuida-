@@ -171,6 +171,12 @@ async function getMessagesChat(chatId) {
                 divMessages.appendChild(divMessage);
             });
 
+            // Si no hay mensajes, mostrar mensaje
+            if (messages.length === 0) {
+                divMessages.innerHTML = `<p class="text-gray-500 font-semibold">No hay mensajes en este chat.</p>`;
+            }
+
+            // Crear el input para enviar mensajes
             const divInput = document.createElement('div');
             divInput.classList.add('flex', 'items-center', 'justify-between', 'w-full', 'p-2', 'bg-gray-500', 'dark:bg-gray-700', 'rounded-lg');
 

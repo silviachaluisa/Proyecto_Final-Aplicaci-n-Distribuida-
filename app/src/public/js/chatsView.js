@@ -126,6 +126,7 @@ async function getChats() {
 }
 
 async function getMessagesChat(chatInfo) {
+    console.log("Chat seleccionado:", chatInfo);
     if (!chatInfo.id) {
         showNotification('No se ha seleccionado un chat', 'error');
         return;
@@ -136,6 +137,7 @@ async function getMessagesChat(chatInfo) {
     try {
         chatsContainer.innerHTML = ''; // Limpiar contenido previo
 
+        await getUsers(chatInfo.id); // Obtener los usuarios del chat
         const response = await fetch(`/api/v1/messages/${chatInfo.id}`, {
             method: 'GET',
             headers: {
@@ -197,7 +199,7 @@ async function getMessagesChat(chatInfo) {
                 } 
 
                 const divMessage = document.createElement('div');
-                divMessage.classList.add('fixed', 'bottom-0', 'flex', 'flex-col', 'items-start', 'justify-start', 'w-full', 'p-2');
+                divMessage.classList.add('flex', 'flex-col', 'items-start', 'justify-start', 'w-full', 'p-2');
 
                 divMessage.innerHTML = `
                     <div class="bg-gray-300 dark:bg-gray-700 p-3 rounded-tr-lg rounded-tl-lg rounded-br-lg text-gray-800 dark:text-white">
@@ -226,6 +228,12 @@ async function getMessagesChat(chatInfo) {
                 </button>
             `;
 
+            // Visualizar el ultimo mensaje (final del chat)
+            requestAnimationFrame(() => {
+                divMessages.scrollTop = divMessages.scrollHeight;
+            });            
+
+            // Dar funcionalidad al input de mensajes
             const inputMessage = divInput.querySelector('#message-input');
             inputMessage.addEventListener('input', () => {
                 // Si tiene contenido, habilitar el boton, de lo contrario, deshabilitarlo
@@ -247,7 +255,7 @@ async function getMessagesChat(chatInfo) {
             const sendMessageBtn = divInput.querySelector('#send-message');
             sendMessageBtn.addEventListener('click', () => {
                 const messageInput = divInput.querySelector('#message-input');
-                sendMessage(chatId, messageInput.value);
+                sendMessage(chatInfo, messageInput.value);
                 messageInput.value = '';
 
                 // Deshabilitar el botón de enviar
@@ -272,14 +280,129 @@ async function getMessagesChat(chatInfo) {
     }
 }
 
-async function sendMessage(chatId, content) {
-    if (!chatId || !content) {
+async function getUsers(chatId) {
+    const usersContainer = document.getElementById('users-list');
+    usersContainer.innerHTML = ''; // Limpiar contenido previo
+
+    try {
+        const response = await fetch(`/api/v1/chat-users/${chatId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+
+        const users = await response.json();
+
+        // Si no hay usuarios, mostrar mensaje
+        if (users.length === 0) {
+            usersContainer.innerHTML = `<p class="text-gray-500 font-semibold">No hay usuarios disponibles.</p>`;
+            return;
+        }
+
+        // Agregar los usuarios cargados
+        users.forEach(user => {
+            const userElement = document.createElement('div');
+            userElement.classList.add('flex', 'items-center', 'justify-eventy', 'w-full', 'p-3', 'border-b', 'rounded-lg', 
+                                      'border-gray-300', 'dark:border-gray-100', 'dark:bg-gray-700', 
+                                      'hover:bg-slate-800', 'dark:hover:bg-slate-800', 'cursor-pointer', "transition", "duration-300");
+            
+            userElement.addEventListener('click', () => {
+                inviteUserToChat(chatId, user.id); // Invitar al usuario al chat
+            });
+
+            userElement.innerHTML = `
+                <div class="w-14 h-12 bg-gray-300 dark:bg-slate-800 rounded-full flex items-center justify-center border-2 border-gray-300 dark:border-gray-900">
+                    <i class="fa-solid fa-user text-gray-500 dark:text-gray-300 text-2xl"></i>
+                </div>
+                <div class="flex flex-col items-start justify-center w-full ml-4">
+                    <p class="text-gray-800 dark:text-white font-semibold">${user.name}</p>
+                    <small class="text-gray-500 dark:text-gray-400">${user.email}</small>
+                </div>
+            `;
+            usersContainer.appendChild(userElement);
+        });
+
+        // Agregar un separador entre los usuarios y la opción de invitar
+        const separator = document.createElement('div');
+        separator.classList.add('w-full', 'h-1', 'bg-gray-300', 'dark:bg-gray-700');
+        usersContainer.appendChild(separator);
+
+        // Agregar la opción de invitar a un usuario
+        const DIVInvite = document.createElement('div');
+        DIVInvite.classList.add('flex', 'flex-col', 'items-center', 'justify-center', 'w-full', 'p-4', 'bg-gray-500', 'dark:bg-gray-700', 'rounded-lg');
+
+        DIVInvite.innerHTML = `
+        <div class="bg-gray-300 dark:bg-slate-800 rounded-full flex p-3 items-center justify-center border-2 border-gray-300 dark:border-gray-900">
+            <p class="text-white font-semibold">Invitar a un usuario</p>
+            <i class="fa-solid fa-user-plus text-2xl text-white ml-2"></i>
+        </div>
+
+        
+        <div class="grid grid-cols-[70%_30%] gap-4 w-full">
+            <div class="flex flex-col items-start justify-start w-full p-2">
+                <label for="email-invite" class="text-gray-800 dark:text-white font-semibold mt-4">Correo electrónico</label>
+                <input type="email" id="email-invite" class="w-full p-2 mt-2 bg-transparent dark:text-white rounded-lg" placeholder="Ingresa el correo electrónico del usuario">
+            </div>
+
+            <div class="flex flex-col items-center justify-center w-full p-2">
+                <button id="invite-user" class="bg-blue-500 dark:bg-blue-700 text-white rounded-lg p-2 cursor-not-allowed w-3/5" disabled>
+                    <span>
+                        <i class="fa-solid fa-user-plus text-xl p-2 text-white"></i>
+                    </span>
+                </button>
+            </div>
+        </div>
+        `;
+        DIVInvite.addEventListener('click', openListUsersModal);
+        usersContainer.appendChild(DIVInvite);
+
+        // Dar funcionalidad al botón de invitar
+        const emailInput = DIVInvite.querySelector('#email-invite');
+        emailInput.addEventListener('input', () => {
+            // Si tiene contenido, habilitar el boton, de lo contrario, deshabilitarlo
+            const email = emailInput.value;
+            const inviteUserBtn = DIVInvite.querySelector('#invite-user');
+            inviteUserBtn.disabled = !email;
+            inviteUserBtn.classList.toggle('cursor-not-allowed', !email);
+            inviteUserBtn.classList.toggle('cursor-pointer', email);
+        });
+
+        emailInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                if (!emailInput.value) return;
+                const inviteUserBtn = DIVInvite.querySelector('#invite-user');
+                inviteUserBtn.click();
+            }
+        });
+
+        const inviteUserBtn = DIVInvite.querySelector('#invite-user');
+        inviteUserBtn.addEventListener('click', () => {
+            const emailInput = DIVInvite.querySelector('#email-invite');
+            inviteUserToChat(chatId, emailInput.value);
+            emailInput.value = '';
+
+            // Deshabilitar el botón de invitar
+            inviteUserBtn.disabled = true;
+            inviteUserBtn.classList.add('cursor-not-allowed');
+            inviteUserBtn.classList.remove('cursor-pointer');
+        });
+
+    } catch (error) {
+        console.error("Error al obtener los usuarios:", error);
+        usersContainer.innerHTML = `<p class="text-red-500 font-semibold">Error al cargar los usuarios.</p>`;
+    }
+}
+
+async function sendMessage(chatInfo, content) {
+    if (!chatInfo.id || !content) {
         showNotification('Debes ingresar un mensaje', 'error');
         return;
     }
 
     try {
-        const response = await fetch(`/api/v1/send-message/${chatId}`, {
+        const response = await fetch(`/api/v1/send-message/${chatInfo.id}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -289,8 +412,8 @@ async function sendMessage(chatId, content) {
         });
 
         if (response.ok) {
+            socket.emit('chat message', chatInfo); // Enviar el mensaje al chat
             showNotification('Mensaje enviado', 'success');
-            getMessagesChat(chatId); // Actualizar los mensajes
         } else {
             const data = await response.json();
             showNotification(data.message, 'error');
@@ -301,10 +424,8 @@ async function sendMessage(chatId, content) {
     }
 }
 
-
-
-async function inviteUserToChat(chatId, userId) {
-    if (!chatId || !userId) {
+async function inviteUserToChat(chatId, userMail) {
+    if (!chatId || !userMail) {
         showNotification('Debes seleccionar un chat y un usuario', 'error');
         return;
     }
@@ -316,17 +437,20 @@ async function inviteUserToChat(chatId, userId) {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
             },
-            body: JSON.stringify({ user_id: userId })
+            body: JSON.stringify({ user_email: userMail })
         });
 
+        const data = await response.json();
+        closeListUsersModal();
+
         if (response.ok) {
-            showNotification('Usuario invitado al chat', 'success');
+            showNotification(data.message, 'success');
             socket.emit('reload chats', { chat_id: chatId });
         } else {
-            const data = await response.json();
             showNotification(data.message, 'error');
         }
     } catch (error) {
+        closeListUsersModal();
         console.error("Error al invitar al usuario:", error);
         showNotification('Error al invitar al usuario', 'error');
     }
@@ -360,12 +484,12 @@ function closeNewChatModal() {
 }
 
 function openListUsersModal() {
-    const modal = document.getElementById('listUsersModal');
+    const modal = document.getElementById('usersModal');
     modal.classList.remove('hidden');
 }
 
 function closeListUsersModal() {
-    const modal = document.getElementById('listUsersModal');
+    const modal = document.getElementById('usersModal');
     modal.classList.add('hidden');
 }
 
@@ -414,6 +538,7 @@ const socket = io(); // Conectar con el servidor WebSocket
 
 socket.on("chat message", (data) => {
     console.log("Mensaje recibido:", data);
+    getMessagesChat(data); // Actualizar los mensajes
 });
 
 socket.on("reload chats", (data) => {

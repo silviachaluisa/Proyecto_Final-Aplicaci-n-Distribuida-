@@ -11,7 +11,7 @@ router.route("/create-chat")
 router.route("/join-chat/:chat_id")
     .post(auth, joinChat); // Ruta para unirse a un chat (POST /api/v1/chat/join)
 
-router.route("/invite-chat/:chat_id")
+router.route("/invite-user/:chat_id")
     .post(auth, inviteToChat); // Ruta para invitar a un chat (POST /api/v1/chat/invite)
 
 router.route("/leave-chat")

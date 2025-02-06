@@ -69,9 +69,9 @@ export const joinChat = async (req, res) => {
 export const inviteToChat = async (req, res) => {
     try {
         const { chat_id } = req.params;
-        const { user_id } = req.body;
+        const { user_email } = req.body;
 
-        if (!chat_id || !user_id) {
+        if (!chat_id || !user_email) {
             return res.status(400).json({ message: "Faltan campos por llenar" });
         }
 
@@ -85,13 +85,20 @@ export const inviteToChat = async (req, res) => {
             return res.status(400).json({ message: `El chat '${chat.name}' no es un chat grupal` });
         }
 
-        const existingUser = await ChatUsers.findOne({ where: { chat_id, user_id } });
+        // Verificar si el usuario a invitar existe
+        const user = await User.findOne({ where: { email: user_email } });
+        if (!user) {
+            return res.status(404).json({ message: "Usuario no encontrado" });
+        }
+
+        // Verificar si el usuario ya está en el chat
+        const existingUser = await ChatUsers.findOne({ where: { chat_id, user_id: user.id } });
         if (existingUser) {
             return res.status(400).json({ message: "El usuario ya está en el chat" });
         }
 
-        await ChatUsers.create({ chat_id, user_id });
-        res.json({ message: "Usuario invitado al chat" });
+        await ChatUsers.create({ chat_id, user_id: user.id });
+        res.json({ message: `Usuario invitado al chat '${chat.name}'` });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Ocurrió un error", error: error.message });

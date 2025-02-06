@@ -90,6 +90,10 @@ async function getChats() {
             chatElement.classList.add('flex', 'items-center', 'justify-eventy', 'w-full', 'p-3', 'border-b', 'rounded-lg', 
                                       'border-gray-300', 'dark:border-gray-100', 'dark:bg-gray-700', 
                                       'hover:bg-slate-800', 'dark:hover:bg-slate-800', 'cursor-pointer', "transition", "duration-300");
+            
+            chatElement.addEventListener('click', () => {
+                getMessagesChat(chat.id);
+            });
 
             chatElement.innerHTML = `
                 <div class="w-14 h-12 bg-gray-300 dark:bg-slate-800 rounded-full flex items-center justify-center border-2 border-gray-300 dark:border-gray-900">
@@ -97,7 +101,7 @@ async function getChats() {
                 </div>
                 <div class="flex flex-col items-start justify-center w-full ml-4">
                     <p class="text-gray-800 dark:text-white font-semibold">${chat.name}</p>
-                    <div class="flex items-end justify-between w-full">
+                    <div class="flex flex-col md:flex-row items-end justify-between w-full">
                         <small class="text-gray-500 dark:text-gray-400">${chat.ownerUser.name}</small>
                         ${chat.is_group ? `<small class='text-gray-500 dark:text-gray-400'>${chat.nUsers} Usuarios</small>` : ""}
                         <small class="text-gray-500 dark:text-gray-400">${chat.is_group ? "Grupo" : "Chat"} ${chat.is_public ? "publico" : "privado"}</small>
@@ -113,8 +117,69 @@ async function getChats() {
     }
 }
 
-async function getChat(params) {
-    
+async function getMessagesChat(chatId) {
+    if (!chatId) {
+        showNotification('No se ha seleccionado un chat', 'error');
+        return;
+    }
+
+    try {
+        const chatsContainer = document.getElementById('chat-container');
+        chatsContainer.innerHTML = ''; // Limpiar contenido previo
+
+        const response = await fetch(`/api/v1/messages/${chatId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+
+        if (response.ok) {
+            const messages = await response.json();
+            console.log("Mensajes:", messages);
+
+            const currentUserID = localStorage.getItem('uid');
+            // Mostrar los mensajes en el chat
+            const divMessages = document.createElement('div');
+            divMessages.classList.add('flex', 'flex-col', 'items-start', 'justify-start', 'w-full', 'h-full', 'p-4', 'gap-4', 'overflow-y-auto');
+
+            messages.forEach(message => {
+                if (message.sender.id === parseInt(currentUserID)) {
+                    const divMessage = document.createElement('div');
+                    divMessage.classList.add('flex', 'flex-col', 'items-end', 'justify-start', 'w-full', 'p-2');
+
+                    divMessage.innerHTML = `
+                    <div class="bg-blue-500 dark:bg-blue-700 p-3 rounded-tr-lg rounded-tl-lg rounded-bl-lg text-white">
+                        <p class="text-white font-semibold">${message.sender.name}</p>
+                        <p class="text-white">${message.content}</p>
+                    </div>
+                    `;
+                    divMessages.appendChild(divMessage);
+                    return;
+                } 
+
+                const divMessage = document.createElement('div');
+                divMessage.classList.add('flex', 'flex-col', 'items-start', 'justify-start', 'w-fit', 'p-2');
+
+                divMessage.innerHTML = `
+                    <div class="bg-gray-300 dark:bg-gray-700 p-3 rounded-tr-lg rounded-tl-lg rounded-br-lg text-gray-800 dark:text-white">
+                        <p class="text-gray-800 dark:text-white font-semibold">${message.sender.name}</p>
+                        <p class="text-gray-600 dark:text-gray-300">${message.content}</p>
+                    </div>
+                `;
+                divMessages.appendChild(divMessage);
+            });
+
+            chatsContainer.appendChild(divMessages);
+        } else {
+            const data = await response.json();
+            showNotification(data.message, 'error');
+        }
+    } catch (error) {
+        console.error("Error al obtener los mensajes:", error.message);
+        showNotification('Error al obtener los mensajes', 'error');
+    }
 }
 
 function openNewChatModal() {
@@ -129,6 +194,7 @@ function closeNewChatModal() {
 
 function handleLogout() {
     localStorage.removeItem('token');
+    localStorage.removeItem('uid');
     window.location.href = '/';
 }
 
@@ -217,12 +283,14 @@ document.addEventListener("DOMContentLoaded", async function () {
 
             if (!response.ok) {
                 localStorage.removeItem("token");
+                localStorage.removeItem("uid");
                 window.location.href = '/';
                 return;
             }
 
             const profile = await response.json();
             document.getElementById('profile-name').textContent = profile.name;
+            localStorage.setItem('uid', profile.id);
 
             // Solo redirige si NO estamos ya en /view/chats
             if (currentPath !== "/view/chats") {
@@ -230,6 +298,8 @@ document.addEventListener("DOMContentLoaded", async function () {
             }
         } catch (error) {
             console.error("Error al verificar autenticación:", error.message);
+            localStorage.removeItem("token");
+            localStorage.removeItem("uid");
             window.location.href = '/';
         }
     } else {

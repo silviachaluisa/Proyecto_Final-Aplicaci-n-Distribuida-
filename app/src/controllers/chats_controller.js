@@ -1,9 +1,4 @@
-import {
-    Chat,
-    User,
-    ChatUsers,
-    Messages
-} from "../config/associations.js";
+import { Chat, User, ChatUsers } from "../config/associations.js";
 import { Op } from "sequelize";
 
 export const createChat = async (req, res) => {

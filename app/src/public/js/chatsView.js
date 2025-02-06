@@ -599,11 +599,11 @@ document.addEventListener("DOMContentLoaded", async function () {
             console.error("Error al verificar autenticación:", error.message);
             localStorage.removeItem("token");
             localStorage.removeItem("uid");
-            window.location.href = '/';
+            window.location.href = '/view/login';
         }
     } else {
-        if (currentPath !== "/") {
-            window.location.href = '/';
+        if (currentPath !== "/view/login") {
+            window.location.href = '/view/login';
         }
     }
 });

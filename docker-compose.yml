@@ -62,11 +62,23 @@ services:
     depends_on:
       - mysql-master1
       - mysql-master2
+    environment:
+      - PORT=3000
+      - MySQL_DATABASE=instamessage_db
+      - MySQL_USER=root
+      - MySQL_PASSWORD=root
+      - MySQL_HOST=mysql-master1
+      - MySQL_PORT=3306
+      - URL_BACKEND=http://localhost:3000/api/v1
+      - URL_FRONTEND=http://localhost:8080
+      - URL_VIEWS=http://localhost:3000
+      - JWT_SECRET=instaM3ss@ge
+      - server_id=1
     volumes:
-      - ./app:/app  # Evita que sobrescriba node_modules
-      - /app/node_modules  # Se asegura de que no se monte la carpeta del host
+      - ./app:/app
+      - /app/node_modules
 
-  node_server2: # Replica del mismo servidor
+  node_server2:
     build:
       context: ./app
       dockerfile: Dockerfile
@@ -78,11 +90,23 @@ services:
     depends_on:
       - mysql-master1
       - mysql-master2
+    environment:
+      - PORT=3000
+      - MySQL_DATABASE=instamessage_db
+      - MySQL_USER=root
+      - MySQL_PASSWORD=root
+      - MySQL_HOST=mysql-master1
+      - MySQL_PORT=3306
+      - URL_BACKEND=http://localhost:3000/api/v1
+      - URL_FRONTEND=http://localhost:8080
+      - URL_VIEWS=http://localhost:3000
+      - JWT_SECRET=instaM3ss@ge
+      - server_id=2
     volumes:
       - ./app:/app
       - /app/node_modules
 
-  node_server3: # Replica del mismo servidor
+  node_server3:
     build:
       context: ./app
       dockerfile: Dockerfile
@@ -94,6 +118,18 @@ services:
     depends_on:
       - mysql-master1
       - mysql-master2
+    environment:
+      - PORT=3000
+      - MySQL_DATABASE=instamessage_db
+      - MySQL_USER=root
+      - MySQL_PASSWORD=root
+      - MySQL_HOST=mysql-master1
+      - MySQL_PORT=3306
+      - URL_BACKEND=http://localhost:3000/api/v1
+      - URL_FRONTEND=http://localhost:8080
+      - URL_VIEWS=http://localhost:3000
+      - JWT_SECRET=instaM3ss@ge
+      - server_id=3
     volumes:
       - ./app:/app
       - /app/node_modules
@@ -105,7 +141,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro  # Asegurar la ruta correcta
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
       - node-server
       - node_server2

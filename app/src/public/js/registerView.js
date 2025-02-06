@@ -122,7 +122,7 @@ document.getElementById('register-form').addEventListener('submit', async functi
         if (response.ok) {
             showNotification(data.message, 'success');
             setTimeout(() => {
-                location.href = '/'; // Redirigir al usuario a la página de inicio de sesión
+                location.href = '/view/login'; // Redirigir al usuario a la página de inicio de sesión
             }, 3000);
         } else {
             console.log(data);

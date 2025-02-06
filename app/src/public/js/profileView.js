@@ -119,9 +119,9 @@ document.addEventListener("DOMContentLoaded", async function () {
             document.getElementById('email').value = data.email;
         } else {
             localStorage.removeItem("token");
-            location.href = '/login'; // Redirigir al login si no hay sesión válida
+            location.href = '/view/login'; // Redirigir al login si no hay sesión válida
         }
     } else {
-        location.href = '/login'; // Redirigir si no hay token
+        location.href = '/view/login'; // Redirigir si no hay token
     }
 });

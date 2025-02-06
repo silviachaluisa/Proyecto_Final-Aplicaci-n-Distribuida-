@@ -42,6 +42,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Rutas a las vistas
 app.get('/', (req, res) => {
+    return res.json({message: 'API de chat', servidor: process.env.server_id});
+});
+
+app.get('/view/login', (req, res) => {
     res.render('login');
 });
 

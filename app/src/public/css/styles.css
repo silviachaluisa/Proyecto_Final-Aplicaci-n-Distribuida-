@@ -824,6 +824,10 @@
   .rounded-tr-lg {
     border-top-right-radius: var(--radius-lg);
   }
+  .rounded-b-lg {
+    border-bottom-right-radius: var(--radius-lg);
+    border-bottom-left-radius: var(--radius-lg);
+  }
   .rounded-br-lg {
     border-bottom-right-radius: var(--radius-lg);
   }
@@ -1197,6 +1201,21 @@
       background-color: var(--color-blue-700);
     }
   }
+  .dark\:bg-gray-400 {
+    @media (prefers-color-scheme: dark) {
+      background-color: var(--color-gray-400);
+    }
+  }
+  .dark\:bg-gray-500 {
+    @media (prefers-color-scheme: dark) {
+      background-color: var(--color-gray-500);
+    }
+  }
+  .dark\:bg-gray-600 {
+    @media (prefers-color-scheme: dark) {
+      background-color: var(--color-gray-600);
+    }
+  }
   .dark\:bg-gray-700 {
     @media (prefers-color-scheme: dark) {
       background-color: var(--color-gray-700);
@@ -1210,6 +1229,11 @@
   .dark\:bg-gray-900 {
     @media (prefers-color-scheme: dark) {
       background-color: var(--color-gray-900);
+    }
+  }
+  .dark\:bg-red-700 {
+    @media (prefers-color-scheme: dark) {
+      background-color: var(--color-red-700);
     }
   }
   .dark\:bg-slate-800 {

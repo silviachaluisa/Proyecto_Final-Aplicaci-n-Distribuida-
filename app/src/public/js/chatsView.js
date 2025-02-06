@@ -92,7 +92,7 @@ async function getChats() {
                                       'hover:bg-slate-800', 'dark:hover:bg-slate-800', 'cursor-pointer', "transition", "duration-300");
             
             chatElement.addEventListener('click', () => {
-                getMessagesChat(chat.id); // Obtener los mensajes del chat
+                getMessagesChat(chat); // Obtener los mensajes del chat
             });
 
             chatElement.innerHTML = `
@@ -117,8 +117,8 @@ async function getChats() {
     }
 }
 
-async function getMessagesChat(chatId) {
-    if (!chatId) {
+async function getMessagesChat(chatInfo) {
+    if (!chatInfo.id) {
         showNotification('No se ha seleccionado un chat', 'error');
         return;
     }
@@ -127,7 +127,7 @@ async function getMessagesChat(chatId) {
     try {
         chatsContainer.innerHTML = ''; // Limpiar contenido previo
 
-        const response = await fetch(`/api/v1/messages/${chatId}`, {
+        const response = await fetch(`/api/v1/messages/${chatInfo.id}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -140,9 +140,31 @@ async function getMessagesChat(chatId) {
             console.log("Mensajes:", messages);
 
             const currentUserID = localStorage.getItem('uid');
+
+            // Mostrar la cabecera (Informacion como el nombre del chat) en la parte superior
+            const chatHeader = document.createElement('div');
+            chatHeader.classList.add('flex', 'items-center', 'justify-between', 'w-full', 'p-4', 'bg-gray-500', 'dark:bg-gray-700', 'rounded-t-lg');
+
+            chatHeader.innerHTML = `
+                <p class="text-white font-semibold">${chatInfo.name}</p>
+                <div class="flex items-center justify-between gap-4">
+                    <button class="bg-gray-300 dark:bg-gray-400 text-white rounded-lg p-2 cursor-pointer">
+                        <span>
+                            <i class="fa-solid fa-user-group text-xl p-2 text-white"></i>
+                        </span>
+                    </button>
+                    <button class="bg-red-500 dark:bg-red-700 text-white rounded-lg p-2 cursor-pointer">
+                        <span>
+                            <i class="fa-solid fa-times text-xl p-2 text-white"></i>
+                        </span>
+                    </button>
+                </div>
+            `;
+            chatsContainer.appendChild(chatHeader);
+
             // Mostrar los mensajes en el chat
             const divMessages = document.createElement('div');
-            divMessages.classList.add('flex', 'flex-col', 'items-start', 'justify-start', 'w-full', 'h-full', 'p-4', 'gap-4', 'overflow-y-auto');
+            divMessages.classList.add('flex', 'flex-col', 'items-start', 'justify-start', 'w-full', 'h-full', 'p-4', 'gap-4', 'overflow-y-auto', "bg-gray-300", "dark:bg-gray-900");
 
             messages.forEach(message => {
                 if (message.sender.id === parseInt(currentUserID)) {
@@ -178,7 +200,7 @@ async function getMessagesChat(chatId) {
 
             // Crear el input para enviar mensajes
             const divInput = document.createElement('div');
-            divInput.classList.add('flex', 'items-center', 'justify-between', 'w-full', 'p-2', 'bg-gray-500', 'dark:bg-gray-700', 'rounded-lg');
+            divInput.classList.add('flex', 'items-center', 'justify-between', 'w-full', 'p-2', 'bg-gray-500', 'dark:bg-gray-700', 'rounded-b-lg');
 
             divInput.innerHTML = `
                 <input type="text" id="message-input" class="w-full p-2 m-2 bg-transparent dark:text-white" placeholder="Escribe un mensaje...">

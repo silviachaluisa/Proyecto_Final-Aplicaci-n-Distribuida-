@@ -117,6 +117,26 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal para listar los usuarios de un chat -->
+    <div id="usersModal" class="fixed inset-0 bg-gray-900 bg-opacity-60 flex flex-col items-center justify-center transition-opacity duration-300 hidden">
+        <div class="bg-white dark:bg-gray-800 w-full max-w-md p-6 rounded-lg shadow-xl transform transition-all scale-95">
+            <!-- Encabezado -->
+            <div class="flex items-center justify-between border-b pb-3">
+                <h1 class="text-2xl font-semibold text-gray-800 dark:text-white">Usuarios del chat</h1>
+                <button id="close-users-modal" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-xl" onclick="closeListUsersModal()">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Contenido del modal -->
+            <div class="mt-4 space-y-4">
+                <div id="users-list" class="flex flex-col gap-2">
+                    <!-- Aquí se insertarán los usuarios -->
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="/js/chatsView.js"></script>
 </body>
 </html>

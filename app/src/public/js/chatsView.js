@@ -167,9 +167,7 @@ async function getMessagesChat(chatInfo) {
 
             // Dar funcionalidad a los botones de la cabecera
             chatHeader.querySelector('button:last-child').addEventListener('click', handleCloseChat);
-            chatHeader.querySelector('button:first-child').addEventListener('click', () => {
-                inviteUserToChat(chatInfo.id, parseInt(localStorage.getItem('uid')));
-            });
+            chatHeader.querySelector('button:first-child').addEventListener('click', openListUsersModal);
 
             // Mostrar los mensajes en el chat
             const divMessages = document.createElement('div');
@@ -295,6 +293,8 @@ async function sendMessage(chatId, content) {
     }
 }
 
+
+
 async function inviteUserToChat(chatId, userId) {
     if (!chatId || !userId) {
         showNotification('Debes seleccionar un chat y un usuario', 'error');
@@ -348,6 +348,16 @@ function openNewChatModal() {
 
 function closeNewChatModal() {
     const modal = document.getElementById('newChatModal');
+    modal.classList.add('hidden');
+}
+
+function openListUsersModal() {
+    const modal = document.getElementById('listUsersModal');
+    modal.classList.remove('hidden');
+}
+
+function closeListUsersModal() {
+    const modal = document.getElementById('listUsersModal');
     modal.classList.add('hidden');
 }
 

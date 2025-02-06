@@ -6,13 +6,13 @@ dotenv.config();
 
 // Crear una instancia de sequelize e indicar credenciales del servidor MySQL
 const sequelize = new Sequelize(
-    process.env.MySQL_DATABASE,
-    process.env.MySQL_USER,
-    process.env.MySQL_PASSWORD,
+    process.env.MYSQL_DATABASE,
+    process.env.MYSQL_USER,
+    process.env.MYSQL_PASSWORD,
     {
         dialect: 'mysql',
-        host: process.env.MySQL_HOST || 'localhost',
-        port: process.env.MySQL_PORT || 3306
+        host: process.env.MYSQL_HOST || 'dbmaster',
+        port: process.env.DOCKER_SQL_PORT || 3306
     }
 );
 

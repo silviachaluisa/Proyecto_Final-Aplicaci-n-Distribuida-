@@ -92,7 +92,7 @@ async function getChats() {
                                       'hover:bg-slate-800', 'dark:hover:bg-slate-800', 'cursor-pointer', "transition", "duration-300");
             
             chatElement.addEventListener('click', () => {
-                getMessagesChat(chat.id);
+                getMessagesChat(chat.id); // Obtener los mensajes del chat
             });
 
             chatElement.innerHTML = `
@@ -122,9 +122,9 @@ async function getMessagesChat(chatId) {
         showNotification('No se ha seleccionado un chat', 'error');
         return;
     }
+    const chatsContainer = document.getElementById('chat-container');
 
     try {
-        const chatsContainer = document.getElementById('chat-container');
         chatsContainer.innerHTML = ''; // Limpiar contenido previo
 
         const response = await fetch(`/api/v1/messages/${chatId}`, {
@@ -160,7 +160,7 @@ async function getMessagesChat(chatId) {
                 } 
 
                 const divMessage = document.createElement('div');
-                divMessage.classList.add('flex', 'flex-col', 'items-start', 'justify-start', 'w-fit', 'p-2');
+                divMessage.classList.add('fixed', 'bottom-0', 'flex', 'flex-col', 'items-start', 'justify-start', 'w-full', 'p-2');
 
                 divMessage.innerHTML = `
                     <div class="bg-gray-300 dark:bg-gray-700 p-3 rounded-tr-lg rounded-tl-lg rounded-br-lg text-gray-800 dark:text-white">
@@ -171,14 +171,27 @@ async function getMessagesChat(chatId) {
                 divMessages.appendChild(divMessage);
             });
 
+            const divInput = document.createElement('div');
+            divInput.classList.add('flex', 'items-center', 'justify-between', 'w-full', 'p-2', 'bg-gray-500', 'dark:bg-gray-700', 'rounded-lg');
+
+            divInput.innerHTML = `
+                <input type="text" id="message-input" class="w-full p-2 m-2 bg-transparent dark:text-white" placeholder="Escribe un mensaje...">
+                <button id="send-message" class="bg-blue-500 dark:bg-blue-700 text-white p-2 rounded-lg">Enviar</button>
+            `;
+
             chatsContainer.appendChild(divMessages);
+            chatsContainer.appendChild(divInput);
         } else {
             const data = await response.json();
             showNotification(data.message, 'error');
+
+            chatsContainer.innerHTML = `<p class="text-red-500 font-semibold">Error al cargar los mensajes.</p>`;
         }
     } catch (error) {
         console.error("Error al obtener los mensajes:", error.message);
         showNotification('Error al obtener los mensajes', 'error');
+
+        chatsContainer.innerHTML = `<p class="text-red-500 font-semibold">Error al cargar los mensajes.</p>`;
     }
 }
 

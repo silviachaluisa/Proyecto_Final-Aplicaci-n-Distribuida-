@@ -60,8 +60,10 @@ services:
     networks:
       - my_network
     depends_on:
-      - mysql-master1
-      - mysql-esclavo
+      mysql-master1:
+        condition: service_healthy
+      mysql-esclavo:
+        condition: service_healthy
     environment:
       - PORT=3000
       - MySQL_DATABASE=instamessage_db
@@ -88,8 +90,10 @@ services:
     networks:
       - my_network
     depends_on:
-      - mysql-master1
-      - mysql-esclavo
+      mysql-master1:
+        condition: service_healthy
+      mysql-esclavo:
+        condition: service_healthy
     environment:
       - PORT=3000
       - MySQL_DATABASE=instamessage_db
@@ -116,8 +120,10 @@ services:
     networks:
       - my_network
     depends_on:
-      - mysql-master1
-      - mysql-esclavo
+      mysql-master1:
+        condition: service_healthy
+      mysql-esclavo:
+        condition: service_healthy
     environment:
       - PORT=3000
       - MySQL_DATABASE=instamessage_db

@@ -162,10 +162,6 @@ export const getChats = async (req, res) => {
             ]
         });
 
-        if (chats.length === 0) {
-            return res.status(404).json({ message: "No hay chats" });
-        }
-
         // Obtener la cantidad de usuarios en cada chat
         for (let i = 0; i < chats.length; i++) {
             const nUsers = await ChatUsers.count({ where: { chat_id: chats[i].id } });

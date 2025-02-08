@@ -2,7 +2,7 @@
 FROM node:18
 
 # Establece el directorio de trabajo dentro del contenedor
-WORKDIR /app
+WORKDIR /backend
 
 # Copia solo package.json y package-lock.json primero para aprovechar caché
 COPY package*.json ./

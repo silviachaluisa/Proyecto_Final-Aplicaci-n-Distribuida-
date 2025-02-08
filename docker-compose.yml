@@ -52,7 +52,7 @@ services:
 
   node-server:
     build:
-      context: ./app
+      context: ./backend
       dockerfile: Dockerfile
     container_name: node_server
     ports:
@@ -77,12 +77,12 @@ services:
       - JWT_SECRET=instaM3ss@ge
       - server_id=1
     volumes:
-      - ./app:/app
-      - /app/node_modules
+      - ./backend:/backend
+      - /backend/node_modules
 
   node_server2:
     build:
-      context: ./app
+      context: ./backend
       dockerfile: Dockerfile
     container_name: node_server2
     ports:
@@ -107,12 +107,12 @@ services:
       - JWT_SECRET=instaM3ss@ge
       - server_id=2
     volumes:
-      - ./app:/app
-      - /app/node_modules
+      - ./backend:/backend
+      - /backend/node_modules
 
   node_server3:
     build:
-      context: ./app
+      context: ./backend
       dockerfile: Dockerfile
     container_name: node_server3
     ports:
@@ -137,8 +137,8 @@ services:
       - JWT_SECRET=instaM3ss@ge
       - server_id=3
     volumes:
-      - ./app:/app
-      - /app/node_modules
+      - ./backend:/backend
+      - /backend/node_modules
 
   # Balanceador de carga
   nginx:

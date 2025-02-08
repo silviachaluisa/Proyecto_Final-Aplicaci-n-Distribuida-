@@ -496,7 +496,7 @@ function closeListUsersModal() {
 function handleLogout() {
     localStorage.removeItem('token');
     localStorage.removeItem('uid');
-    window.location.href = '/';
+    window.location.href = '/view/login';
 }
 
 const handleCreateChat = async () => {
@@ -534,7 +534,9 @@ const handleCreateChat = async () => {
     }
 };
 
-const socket = io(); // Conectar con el servidor WebSocket
+const socket = io('http://localhost', {
+    transports: ['websocket'], // Fuerza WebSocket en lugar de polling
+});
 
 socket.on("chat message", (data) => {
     console.log("Mensaje recibido:", data);

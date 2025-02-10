@@ -5,7 +5,7 @@ import { FaUser } from "react-icons/fa";
 import { LuLogOut } from "react-icons/lu";
 
 const HeaderNav = () => {
-    const { logout, user } = useAuth();
+    const { logout, user, loading } = useAuth();
     return (
         <header className="w-full bg-gray-500 dark:bg-gray-800 fixed top-0 z-10 px-4 sm:px-6 md:px-8">
             <nav className="bg-gray-500 dark:bg-gray-800 w-full shadow-lg rounded-lg">
@@ -18,7 +18,13 @@ const HeaderNav = () => {
                         <Link to="/view/profile" className="text-white hover:text-gray-300 font-semibold flex items-center">
                             <FaUser className="text-xl" />
                             <span className="ml-2">
-                                {user?.name || "No disponible"}
+                                {
+                                    loading ? (
+                                        "Cargando..."
+                                    ) : (
+                                        user?.name || "No disponible"
+                                    )
+                                }
                             </span>
                         </Link>
                         <Link className="text-red-500 hover:text-red-700 font-semibold cursor-pointer flex items-center" to="/login">

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom"
 
@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }) => {
                 setNotification({ type: 'success', content: data.message });
                 setTimeout(() => {
                     setNotification({ type: 'success', content: '' });
-                    navigate('/view/chats');
+                    navigate('/chats');
                 }, 3000);
             } else {
                 setNotification({ type: 'error', content: data.message });
@@ -55,10 +55,45 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const register = async (name, email, password, Cpassword) => {
+        try {
+            if (password !== Cpassword) {
+                setNotification({ type: 'error', content: 'Las contraseñas no coinciden' });
+                setTimeout(() => {
+                    setNotification({ type: 'success', content: '' });
+                }, 3000);
+                return;
+            }
+
+            setLoading(true);
+            const response = await axios.post('/api/v1/user/register', { name, email, password });
+            const data = response.data;
+
+            if (response.status === 201) {
+                setNotification({ type: 'success', content: data.message });
+                setTimeout(() => {
+                    setNotification({ type: 'success', content: '' });
+                    navigate('/login');
+                }, 3000);
+            } else {
+                setNotification({ type: 'error', content: data.message });
+                setTimeout(() => {
+                    setNotification({ type: 'success', content: '' });
+                }, 3000);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            setNotification({ type: 'error', content: error.message });
+            setTimeout(() => {
+                setNotification({ type: 'success', content: '' });
+            }, 3000);
+        }
+    };
+
     const logout = () => {
         localStorage.removeItem('token');
         setUser(null);
-        navigate('/');
+        navigate('/login');
     };
 
     const profile = async () => {
@@ -95,10 +130,20 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            profile();
+        } else {
+            setLoading(false);
+        }
+    }, []);
+
     return (
         <AuthContext.Provider value={{
             user,
             login,
+            register,
             logout,
             profile,
             loading,

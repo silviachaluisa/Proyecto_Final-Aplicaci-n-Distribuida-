@@ -35,11 +35,8 @@ const LoginPage = () => {
     }
 
     useEffect(() => {
-        if (formLogin.email.trim() !== '' || formLogin.password.trim() !== '') {
-            setDisabledButton(false);
-        } else {
-            setDisabledButton(true);
-        }
+        const allFieldsFilled = Object.values(formLogin).every(value => value.trim() !== '');
+        setDisabledButton(!allFieldsFilled);
     }, [formLogin]);
 
     return (
@@ -72,9 +69,9 @@ const LoginPage = () => {
                         />
                         { 
                             showPass ? 
-                            <FaEyeSlash onClick={ handleShowPass } className="absolute right-4 top-4 cursor-pointer text-center text-gray-500 dark:text-gray-700 text-xl" data-tooltip-id='toggle-pass' data-tooltip-content='Ocultar contraseña'/> 
+                            <FaEyeSlash onClick={ handleShowPass } className="absolute right-4 top-4 cursor-pointer text-center text-gray-500 dark:text-gray-500 text-xl" data-tooltip-id='toggle-pass' data-tooltip-content='Ocultar contraseña'/> 
                             :
-                            <FaEye onClick={ handleShowPass } className="absolute right-4 top-4 cursor-pointer text-center text-gray-500 dark:text-gray-700 text-xl" data-tooltip-id='toggle-pass' data-tooltip-content='Mostrar contraseña'/>
+                            <FaEye onClick={ handleShowPass } className="absolute right-4 top-4 cursor-pointer text-center text-gray-500 dark:text-gray-500 text-xl" data-tooltip-id='toggle-pass' data-tooltip-content='Mostrar contraseña'/>
                         }
                         <ReactTooltip id='toggle-pass' place='top' effect='solid' className='bg-gray-800 text-white p-2 rounded-lg'/>
                     </div>

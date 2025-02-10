@@ -13,7 +13,7 @@ const ChatBanner = ({ chatInfo }) => {
                     <p className="text-gray-800 dark:text-white font-semibold">${chatInfo.name}</p>
                     <div className="flex flex-col md:flex-row items-end justify-between w-full">
                         <small className="text-gray-500 dark:text-gray-400">${chatInfo.ownerUser.name}</small>
-                        ${chatInfo.is_group ? `<small className='text-gray-500 dark:text-gray-400'>${chat.nUsers} Usuarios</small>` : ""}
+                            {chatInfo.is_group ? `<small className='text-gray-500 dark:text-gray-400'>${chat.nUsers} Usuarios</small>` : ""}
                         <small className="text-gray-500 dark:text-gray-400">${chatInfo.is_group ? "Grupo" : "Chat"} ${chatInfo.is_public ? "publico" : "privado"}</small>
                     </div>
                 </div>

@@ -91,7 +91,10 @@ export const ChatProvider = ({ children }) => {
     };
 
     useEffect(() => {
-        getChats();
+        const token = localStorage.getItem('token');
+        if (token) {
+            getChats();
+        }
     }, []);
 
     return (

@@ -58,7 +58,7 @@ const ChatsPage = () => {
                             : (
                                 chats.length > 0 ? (
                                     chats.map((chat) => (
-                                        <ChatBanner key={chat._id} chatInfo={chat} />
+                                        <ChatBanner key={chat.id} chatInfo={chat} />
                                     ))
                                 ) : (
                                     <p className="text-gray-500 font-semibold italic">No hay chats disponibles.</p>

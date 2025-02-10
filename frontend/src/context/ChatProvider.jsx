@@ -34,7 +34,7 @@ export const ChatProvider = ({ children }) => {
             let data = response.data;
 
             if (response.status === 200) {
-                setChats(response);
+                setChats(data);
             } else {
                 setNotification({ type: 'error', content: data.message });
                 setTimeout(() => {

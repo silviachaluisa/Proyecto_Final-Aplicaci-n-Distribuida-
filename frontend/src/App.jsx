@@ -24,9 +24,11 @@ function App() {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
             </Route>
-            <Route path="/chats" element={
+            <Route path="/chats/*" element={
               <PrivateRoute >
-                <Route path="/" element={<ChatsPage />} />
+                <Routes>
+                  <Route path="/" element={<ChatsPage />} />
+                </Routes>
               </PrivateRoute>
             }
             />

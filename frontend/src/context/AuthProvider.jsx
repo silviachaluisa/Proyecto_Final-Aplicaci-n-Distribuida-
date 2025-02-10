@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
     const login = async (email, password) => {
         try {
             setLoading(true);
-            const response = await axios.post('/api/v1/user/login', { email, password });
+            const response = await axios.post(import.meta.env.VITE_BACKEND_URL + '/api/v1/user/login', { email, password });
             const data = response.data;
 
             if (response.status === 200) {
@@ -46,7 +46,7 @@ export const AuthProvider = ({ children }) => {
             }
         } catch (error) {
             console.error('Error:', error);
-            setNotification({ type: 'error', content: error.message });
+            setNotification({ type: 'error', content: error.response.data.message });
             setTimeout(() => {
                 setNotification({ type: 'success', content: '' });
             }, 3000);
@@ -66,7 +66,7 @@ export const AuthProvider = ({ children }) => {
             }
 
             setLoading(true);
-            const response = await axios.post('/api/v1/user/register', { name, email, password });
+            const response = await axios.post(import.meta.env.VITE_BACKEND_URL + '/api/v1/user/register', { name, email, password });
             const data = response.data;
 
             if (response.status === 201) {
@@ -83,7 +83,7 @@ export const AuthProvider = ({ children }) => {
             }
         } catch (error) {
             console.error('Error:', error);
-            setNotification({ type: 'error', content: error.message });
+            setNotification({ type: 'error', content: error.response.data.message });
             setTimeout(() => {
                 setNotification({ type: 'success', content: '' });
             }, 3000);
@@ -99,7 +99,7 @@ export const AuthProvider = ({ children }) => {
     const profile = async () => {
         try {
             setLoading(true);
-            const response = await axios.get('/api/v1/user', {
+            const response = await axios.get(import.meta.env.VITE_BACKEND_URL + '/api/v1/user', {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 }
@@ -119,7 +119,7 @@ export const AuthProvider = ({ children }) => {
             }
         } catch (error) {
             console.error('Error:', error);
-            setNotification({ type: 'error', content: error.message });
+            setNotification({ type: 'error', content: error.response.data.message });
             setTimeout(() => {
                 setNotification({ type: 'success', content: '' });
                 localStorage.removeItem('token');

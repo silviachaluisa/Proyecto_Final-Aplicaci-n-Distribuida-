@@ -24,7 +24,7 @@ export const ChatProvider = ({ children }) => {
     const getChats = async () => {
         try {
             setLoading(true);
-            const response = await axios.get('/api/v1/chats', {
+            const response = await axios.get(import.meta.env.VITE_BACKEND_URL + '/api/v1/chats', {
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -43,7 +43,7 @@ export const ChatProvider = ({ children }) => {
             }
         } catch (error) {
             console.error('Error:', error);
-            setNotification({ type: 'error', content: error.message });
+            setNotification({ type: 'error', content: error.response.data.message });
             setTimeout(() => {
                 setNotification({ type: 'success', content: '' });
             }, 3000);
@@ -55,7 +55,7 @@ export const ChatProvider = ({ children }) => {
     const createChat = async (name, is_group, is_public) => {
         try {
             setLoading(true);
-            const response = await axios.post('/api/v1/create-chat', { 
+            const response = await axios.post(import.meta.env.VITE_BACKEND_URL + '/api/v1/create-chat', { 
                 name, 
                 is_group, 
                 is_public
@@ -81,7 +81,7 @@ export const ChatProvider = ({ children }) => {
             }
         } catch (error) {
             console.error('Error:', error);
-            setNotification({ type: 'error', content: error.message });
+            setNotification({ type: 'error', content: error.response.data.message });
             setTimeout(() => {
                 setNotification({ type: 'success', content: '' });
             }, 3000);

@@ -29,7 +29,7 @@ export const getMessages = async (req, res) => {
             }
         }
 
-        res.json(messages);
+        res.status(200).json(messages);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Ocurrió un error", error: error.message });
@@ -51,7 +51,7 @@ export const sendMessage = async (req, res) => {
         }
 
         await Messages.create({ chat_id, user_id: req.uid, content, readby: JSON.stringify([req.uid]) });
-        res.json({ message: "Mensaje enviado" });
+        res.status(201).json({ message: "Mensaje enviado" });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Ocurrió un error", error: error.message });
@@ -77,7 +77,7 @@ export const editMessage = async (req, res) => {
         }
 
         await message.update({ content });
-        res.json({ message: "Mensaje editado" });
+        res.status(200).json({ message: "Mensaje editado" });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Ocurrió un error", error: error.message });
@@ -104,7 +104,7 @@ export const readMessage = async (req, res) => {
 
         readby.push(req.uid);
         await message.update({ readby: JSON.stringify(readby) });
-        res.json({ message: "Mensaje leído" });
+        res.status(200).json({ message: "Mensaje leído" });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Ocurrió un error", error: error.message });
@@ -129,7 +129,7 @@ export const deleteMessage = async (req, res) => {
         }
 
         await message.destroy();
-        res.json({ message: "Mensaje eliminado" });
+        res.status(200).json({ message: "Mensaje eliminado" });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Ocurrió un error", error: error.message });

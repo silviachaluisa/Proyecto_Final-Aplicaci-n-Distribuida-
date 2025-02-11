@@ -15,11 +15,18 @@ const ChatScreen = () => {
     useEffect(() => {
         if (!selectedChat) {
             window.location.href = '/chats';
+            return;
         }
 
         getChatMessages(selectedChat.id);
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [selectedChat, messages]);
+    }, [selectedChat]);
+
+    // Hacer scroll después de que los mensajes hayan cambiado
+    useEffect(() => {
+        if (messages.length > 0) {
+            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [messages]); // Se activa solo cuando los mensajes cambian
 
     return (
         <>

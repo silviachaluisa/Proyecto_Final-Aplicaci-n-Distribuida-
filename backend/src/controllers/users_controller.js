@@ -48,7 +48,7 @@ export const login = async (req, res) => {
         }
 
         const token = generarJWT(user.id);
-        res.json({ message: "Bienvenido", token });
+        res.json({ message: "Bienvenido", token, uid: user.id});
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Ocurrió un error", error: error.message });

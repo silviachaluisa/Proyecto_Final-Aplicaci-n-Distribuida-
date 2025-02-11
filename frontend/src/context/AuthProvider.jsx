@@ -31,7 +31,8 @@ export const AuthProvider = ({ children }) => {
                 localStorage.setItem('token', data.token);
                 setUser({
                     email: data.email,
-                    name: data.name
+                    name: data.name,
+                    id: data.uid
                 });
                 setNotification({ type: 'success', content: data.message });
                 setTimeout(() => {

@@ -14,7 +14,9 @@ export const useChat = () => {
 
 export const ChatProvider = ({ children }) => {
     const navigate = useNavigate();
+    const [selectedChat, setSelectedChat] = useState(null);
     const [chats, setChats] = useState([]);
+    const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(true);
     const [notification, setNotification] = useState({
         type: 'success',
@@ -90,6 +92,143 @@ export const ChatProvider = ({ children }) => {
         }
     };
 
+    const getChatMessages = async (chatId) => {
+        try {
+            setLoading(true);
+            const response = await axios.get(import.meta.env.VITE_BACKEND_URL + `/api/v1/messages/${chatId}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+
+            let data = response.data;
+
+            if (response.status === 200) {
+                setMessages(data);
+            } else {
+                setNotification({ type: 'error', content: data.message });
+                setTimeout(() => {
+                    setNotification({ type: 'success', content: '' });
+                }, 3000);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            setNotification({ type: 'error', content: error.response.data.message });
+            setTimeout(() => {
+                setNotification({ type: 'success', content: '' });
+            }, 3000);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const sendMessage = async (chatId, message) => {
+        try {
+            setLoading(true);
+            const response = await axios.post(import.meta.env.VITE_BACKEND_URL + `/api/v1/send-message/${chatId}`, { 
+                message 
+            }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            const data = response.data;
+
+            if (response.status === 201) {
+                setNotification({ type: 'success', content: data.message });
+                setTimeout(() => {
+                    setNotification({ type: 'success', content: '' });
+                }, 3000);
+                getChatMessages(chatId);
+            } else {
+                setNotification({ type: 'error', content: data.message });
+                setTimeout(() => {
+                    setNotification({ type: 'success', content: '' });
+                }, 3000);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            setNotification({ type: 'error', content: error.response.data.message });
+            setTimeout(() => {
+                setNotification({ type: 'success', content: '' });
+            }, 3000);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const deleteChat = async (chatId) => {
+        try {
+            setLoading(true);
+            const response = await axios.delete(import.meta.env.VITE_BACKEND_URL + `/api/v1/chat/${chatId}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            const data = response.data;
+
+            if (response.status === 200) {
+                setNotification({ type: 'success', content: data.message });
+                setTimeout(() => {
+                    setNotification({ type: 'success', content: '' });
+                }, 3000);
+                getChats();
+            } else {
+                setNotification({ type: 'error', content: data.message });
+                setTimeout(() => {
+                    setNotification({ type: 'success', content: '' });
+                }, 3000);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            setNotification({ type: 'error', content: error.response.data.message });
+            setTimeout(() => {
+                setNotification({ type: 'success', content: '' });
+            }, 3000);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const inviteToChat = async (chatId, userEmail) => {
+        try {
+            setLoading(true);
+            const response = await axios.post(import.meta.env.VITE_BACKEND_URL + `/api/v1/invite-user/${chatId}`, { 
+                user_email: userEmail
+            }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            const data = response.data;
+
+            if (response.status === 201) {
+                setNotification({ type: 'success', content: data.message });
+                setTimeout(() => {
+                    setNotification({ type: 'success', content: '' });
+                }, 3000);
+                getChats();
+            } else {
+                setNotification({ type: 'error', content: data.message });
+                setTimeout(() => {
+                    setNotification({ type: 'success', content: '' });
+                }, 3000);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            setNotification({ type: 'error', content: error.response.data.message });
+            setTimeout(() => {
+                setNotification({ type: 'success', content: '' });
+            }, 3000);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (token) {
@@ -98,7 +237,7 @@ export const ChatProvider = ({ children }) => {
     }, []);
 
     return (
-        <ChatContext.Provider value={{ chats, loading, notification, getChats, createChat }}>
+        <ChatContext.Provider value={{ chats, loading, notification, messages, selectedChat, setSelectedChat, getChats, createChat, getChatMessages, sendMessage, deleteChat, inviteToChat }}>
             {children}
         </ChatContext.Provider>
     );

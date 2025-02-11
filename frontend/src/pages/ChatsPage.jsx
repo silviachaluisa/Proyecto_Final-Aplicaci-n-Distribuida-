@@ -14,10 +14,23 @@ import Notification from '../components/Notification';
 import ChargeChatBanner from '../components/ChargeChatBanner';
 import ChatBanner from '../components/ChatBanner';
 import ChatWelcome from '../components/ChatWelcome';
+import ChatScreen from '../components/ChatScreen';
 
 const ChatsPage = () => {
     const { user, notification } = useAuth();
-    const { chats, notification:chatNotification, getChats, createChat, loading } = useChat();
+    const {
+        chats,
+        notification: chatNotification,
+        getChats,
+        createChat,
+        selectedChat,
+        setSelectedChat,
+        loading
+    } = useChat();
+
+    const handleClickChat = (chatInfo) => {
+        setSelectedChat(chatInfo);
+    };
 
     useEffect(() => {
         getChats();
@@ -54,11 +67,10 @@ const ChatsPage = () => {
                                 [...Array(5)].map((_, i) => (
                                     <ChargeChatBanner key={i} />
                                 ))
-                            ) 
-                            : (
+                            ) : (
                                 chats.length > 0 ? (
                                     chats.map((chat) => (
-                                        <ChatBanner key={chat.id} chatInfo={chat} />
+                                        <ChatBanner key={chat.id} chatInfo={chat} handleClick={() => handleClickChat(chat)} />
                                     ))
                                 ) : (
                                     <p className="text-gray-500 font-semibold italic">No hay chats disponibles.</p>
@@ -67,7 +79,15 @@ const ChatsPage = () => {
                         }
                     </div>
                 </div>
-                <ChatWelcome />
+                <div className="w-full md:w-8/12 lg:w-8/12 flex items-center justify-center">
+                    {
+                        selectedChat ? (
+                            <ChatScreen />
+                        ) : (
+                            <ChatWelcome />
+                        )
+                    }
+                </div>
             </div>
         </div>
     )

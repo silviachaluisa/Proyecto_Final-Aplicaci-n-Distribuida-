@@ -18,6 +18,7 @@ export const ChatProvider = ({ children }) => {
     const [chats, setChats] = useState([]);
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [loadingMessages, setLoadingMessages] = useState(true);
     const [notification, setNotification] = useState({
         type: 'success',
         content: ''
@@ -94,7 +95,7 @@ export const ChatProvider = ({ children }) => {
 
     const getChatMessages = async (chatId) => {
         try {
-            setLoading(true);
+            setLoadingMessages(true);
             const response = await axios.get(import.meta.env.VITE_BACKEND_URL + `/api/v1/messages/${chatId}`, {
                 headers: {
                     'Content-Type': 'application/json',
@@ -105,6 +106,7 @@ export const ChatProvider = ({ children }) => {
             let data = response.data;
 
             if (response.status === 200) {
+                console.log(`Mensajes del chat ${chatId}:`, data);
                 setMessages(data);
             } else {
                 setNotification({ type: 'error', content: data.message });
@@ -119,13 +121,13 @@ export const ChatProvider = ({ children }) => {
                 setNotification({ type: 'success', content: '' });
             }, 3000);
         } finally {
-            setLoading(false);
+            setLoadingMessages(false);
         }
     };
 
     const sendMessage = async (chatId, message) => {
         try {
-            setLoading(true);
+            setLoadingMessages(true);
             const response = await axios.post(import.meta.env.VITE_BACKEND_URL + `/api/v1/send-message/${chatId}`, { 
                 content: message 
             }, {
@@ -155,7 +157,7 @@ export const ChatProvider = ({ children }) => {
                 setNotification({ type: 'success', content: '' });
             }, 3000);
         } finally {
-            setLoading(false);
+            setLoadingMessages(false);
         }
     };
 

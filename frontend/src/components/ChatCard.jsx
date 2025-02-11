@@ -11,7 +11,7 @@ const ChatCard = ({ chatMessages }) => {
             {
                 chatMessages.sender.id === user.id ? (
                     <div className="w-full flex flex-col items-end justify-start gap-4 p-2">
-                        <div className="bg-blue-500 dark:bg-blue-700 p-3 rounded-tr-lg rounded-tl-lg rounded-br-lg text-white">
+                        <div className="bg-blue-500 dark:bg-blue-700 p-3 rounded-tr-lg rounded-tl-lg rounded-bl-lg text-white">
                             <p className="text-white font-semibold">{chatMessages.sender.name}</p>
                             <p className="text-white">{chatMessages.content}</p>
                         </div>

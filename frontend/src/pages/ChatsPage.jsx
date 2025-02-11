@@ -24,15 +24,15 @@ const ChatsPage = () => {
         getChats,
         createChat,
         selectedChat,
-        setSelectedChat,
         loading
     } = useChat();
 
-    const handleClickChat = (chatInfo) => {
-        setSelectedChat(chatInfo);
+    const handleRefreshChats = () => {
+        getChats();
     };
 
     useEffect(() => {
+        console.log('ChatsPage: useEffect');
         getChats();
     }, []);
 
@@ -56,7 +56,7 @@ const ChatsPage = () => {
                         <div className="flex items-center justify-center bg-gray-300 rounded-lg cursor-pointer hover:bg-gray-400 w-10 h-10">
                             <FaPlus className="text-xl" data-tooltip-id="addChat" data-tooltip-content="Crear un nuevo chat" />
                         </div>
-                        <div className="flex items-center justify-center bg-gray-300 rounded-lg cursor-pointer hover:bg-gray-400 w-10 h-10">
+                        <div className="flex items-center justify-center bg-gray-300 rounded-lg cursor-pointer hover:bg-gray-400 w-10 h-10" onClick={handleRefreshChats}>
                             <IoReload className="text-xl font-bold" data-tooltip-id="reloadChats" data-tooltip-content="Recargar los chats"/>
                         </div>
                         <ReactTooltip id="addChat" place='bottom' />
@@ -64,14 +64,14 @@ const ChatsPage = () => {
                     </div>
                     <div id="chats-container" className="flex flex-col gap-4 mt-4 w-full justify-center items-center">
                         {
-                            loading ? (
+                            (loading ) ? (
                                 [...Array(5)].map((_, i) => (
                                     <ChargeChatBanner key={i} />
                                 ))
                             ) : (
                                 chats.length > 0 ? (
                                     chats.map((chat) => (
-                                        <ChatBanner key={chat.id} chatInfo={chat} handleClick={() => handleClickChat(chat)} />
+                                        <ChatBanner key={chat.id} chatInfo={chat} />
                                     ))
                                 ) : (
                                     <p className="text-gray-500 font-semibold italic">No hay chats disponibles.</p>

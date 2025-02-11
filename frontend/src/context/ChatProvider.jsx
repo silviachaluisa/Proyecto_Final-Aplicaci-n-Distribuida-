@@ -126,7 +126,6 @@ export const ChatProvider = ({ children }) => {
 
     const sendMessage = async (chatId, message) => {
         try {
-            setLoadingMessages(true);
             const response = await axios.post(import.meta.env.VITE_BACKEND_URL + `/api/v1/send-message/${chatId}`, { 
                 content: message 
             }, {
@@ -155,8 +154,6 @@ export const ChatProvider = ({ children }) => {
             setTimeout(() => {
                 setNotification({ type: 'success', content: '' });
             }, 3000);
-        } finally {
-            setLoadingMessages(false);
         }
     };
 

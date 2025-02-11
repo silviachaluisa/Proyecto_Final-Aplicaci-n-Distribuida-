@@ -11,7 +11,10 @@ export const useSocket = () => {
         // Conectar al servidor
         socketRef.current = io(SOCKET_SERVER_URL, {
             path: "/socket.io/",
-            transports: ["websocket", "polling"]
+            transports: ["websocket", "polling"],
+            reconnection: true,        // Habilita reconexión automática
+            reconnectionAttempts: 10,  // Intentos máximos de reconexión
+            reconnectionDelay: 5000    // Espera 5 segundos entre intentos
         });
 
         // Confirmar conexión

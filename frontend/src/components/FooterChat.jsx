@@ -5,9 +5,11 @@ import { useSocket } from "../context/useSocket";
 
 // Importación de contextos
 import { useChat } from '../context/ChatProvider';
+import { useAuth } from '../context/AuthProvider';
 
 const FooterChat = () => {
     const { selectedChat, sendMessage } = useChat();
+    const { user } = useAuth();
     const [message, setMessage] = useState('');
     const socket = useSocket();
 
@@ -17,6 +19,12 @@ const FooterChat = () => {
 
     const handleSendMessage = () => {
         sendMessage(selectedChat.id, message);
+        const newMessage = {
+            chatId: selectedChat.id,
+            content: message,
+            sender: user.id,
+            createdAt: new Date().toISOString()
+        };
         socket.emit("send_message", { chatId: selectedChat.id, content: message });
         setMessage('');
     };

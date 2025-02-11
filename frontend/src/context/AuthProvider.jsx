@@ -30,9 +30,9 @@ export const AuthProvider = ({ children }) => {
             if (response.status === 200) {
                 localStorage.setItem('token', data.token);
                 setUser({
-                    email: data.email,
-                    name: data.name,
-                    id: data.uid
+                    email: data.user.email,
+                    name: data.user.name,
+                    id: data.user.id
                 });
                 setNotification({ type: 'success', content: data.message });
                 setTimeout(() => {

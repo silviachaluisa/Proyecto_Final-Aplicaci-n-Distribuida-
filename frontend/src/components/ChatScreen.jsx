@@ -20,7 +20,7 @@ const ChatScreen = () => {
     }, []);
 
     return (
-        <div>
+        <>
             <HeaderChat />
 
             <div className='flex flex-col items-start justify-start w-full h-full p-4 gap-4 overflow-y-auto bg-gray-300 dark:bg-gray-900'>
@@ -36,7 +36,7 @@ const ChatScreen = () => {
             </div>
 
             <FooterChat />
-        </div>
+        </>
     )
 }
 

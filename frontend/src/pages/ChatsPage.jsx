@@ -40,6 +40,7 @@ const ChatsPage = () => {
         <div className='bg-gray-100 dark:bg-gray-900 flex flex-col items-center justify-center h-screen'>
             <HeaderNav />
             { notification.content && <Notification type={ notification.type } content={ notification.content } /> }
+            { chatNotification.content && <Notification type={ chatNotification.type } content={ chatNotification.content } /> }
             <div className="w-full flex flex-col md:flex-row gap-4 max-w-7xl mt-16 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md h-screen md:h-5/6">
                 <div className="w-full md:w-4/12 lg:w-4/12 flex flex-col items-start justify-start border-r border-gray-300 dark:border-gray-700 p-4 overflow-y-auto">
                     <h1 className="text-3xl font-semibold text-center text-gray-800 dark:text-white mb-6">
@@ -79,7 +80,7 @@ const ChatsPage = () => {
                         }
                     </div>
                 </div>
-                <div className="w-full md:w-8/12 lg:w-8/12 flex items-center justify-center">
+                <div className='w-full md:w-8/12 lg:w-9/12 flex flex-col items-center justify-center p-4 h-full'>
                     {
                         selectedChat ? (
                             <ChatScreen />

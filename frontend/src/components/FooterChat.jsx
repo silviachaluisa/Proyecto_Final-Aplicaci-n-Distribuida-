@@ -29,11 +29,12 @@ const FooterChat = () => {
                 onChange={handleChange}
             />
             <button
-                className="bg-blue-500 dark:bg-blue-700 text-white rounded-lg cursor-not-allowed"
+                className="bg-blue-500 dark:bg-blue-700 text-white rounded-lg p-4"
+                style={{ cursor: message ? 'pointer' : 'not-allowed' }}
                 disabled={!message}
                 onClick={handleSendMessage}
                 data-tooltip-id='sendMessage'
-                data-tooltip-content='Enviar mensaje'
+                data-tooltip-content={message ? `Enviar mensaje a ${selectedChat.name}` : 'Escribe un mensaje para enviar'}
             >
                 <span>
                     <BsSendFill className="text-xl" />

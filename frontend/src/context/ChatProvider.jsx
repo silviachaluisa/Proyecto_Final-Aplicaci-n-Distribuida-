@@ -127,7 +127,7 @@ export const ChatProvider = ({ children }) => {
         try {
             setLoading(true);
             const response = await axios.post(import.meta.env.VITE_BACKEND_URL + `/api/v1/send-message/${chatId}`, { 
-                message 
+                content: message 
             }, {
                 headers: {
                     'Content-Type': 'application/json',

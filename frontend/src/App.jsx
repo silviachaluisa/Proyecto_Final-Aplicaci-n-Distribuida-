@@ -13,6 +13,7 @@ import { PrivateRoute } from './routes/PrivateRoutes'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import ChatsPage from './pages/ChatsPage'
+import WelcomePage from './pages/WelcomePage'
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
       <AuthProvider>
         <ChatProvider>
           <Routes>
+            <Route index element={<WelcomePage />} />
             <Route path="/" element={<Auth />} >
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />

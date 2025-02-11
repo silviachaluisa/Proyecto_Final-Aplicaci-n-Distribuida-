@@ -89,7 +89,7 @@ const LoginPage = () => {
                         <div className="h-full bg-blue-500 rounded-full transition-all duration-300" style={{ width: "0%" }}></div>
                     </div>
                     <p className="dark:text-white text-center">
-                        No tienes cuenta, <Link to="/register" className="text-blue-500 font-bold">Regístrate</Link>
+                        No tienes cuenta, <Link to="/register" className="text-blue-500 hover:text-blue-600 font-bold">Regístrate</Link>
                     </p>
                 </form>
             </div>

@@ -169,7 +169,7 @@ const RegisterPage = () => {
                         </div>
                     </div>
                     <p className="dark:text-white text-center">
-                        No tienes cuenta, <Link to="/login" className="text-blue-500 font-bold">Inicia sesion</Link>
+                        No tienes cuenta, <Link to="/login" className="text-blue-500 hover:text-blue-600 font-bold">Inicia sesion</Link>
                     </p>
                 </form>
             </div>

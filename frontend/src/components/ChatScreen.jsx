@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 
 // Importación de contextos
 import { useChat } from '../context/ChatProvider';
@@ -10,6 +10,7 @@ import FooterChat from '../components/FooterChat';
 
 const ChatScreen = () => {
     const { selectedChat, getChatMessages, messages } = useChat();
+    const messagesEndRef = useRef(null);
 
     useEffect(() => {
         if (!selectedChat) {
@@ -17,7 +18,8 @@ const ChatScreen = () => {
         }
 
         getChatMessages(selectedChat.id);
-    }, []);
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [selectedChat, messages]);
 
     return (
         <>
@@ -35,6 +37,7 @@ const ChatScreen = () => {
                         </div>
                     )
                 }
+                <div ref={messagesEndRef} />
             </div>
 
             <FooterChat />

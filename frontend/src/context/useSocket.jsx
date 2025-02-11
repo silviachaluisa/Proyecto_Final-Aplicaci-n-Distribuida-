@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { io } from "socket.io-client";
 
-const SOCKET_SERVER_URL = import.meta.env.VITE_BACKEND_URL;
+const SOCKET_SERVER_URL = import.meta.env.VITE_SOCKET_SERVER_URL;
 
 export const useSocket = () => {
     const [socketConnected, setSocketConnected] = useState(false);
@@ -10,8 +10,8 @@ export const useSocket = () => {
     useEffect(() => {
         // Conectar al servidor
         socketRef.current = io(SOCKET_SERVER_URL, {
-            autoConnect: true,
-            transports: ["websocket"],
+            path: "/socket.io/",
+            transports: ["websocket", "polling"]
         });
 
         // Confirmar conexión

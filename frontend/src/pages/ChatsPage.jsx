@@ -32,7 +32,6 @@ const ChatsPage = () => {
     };
 
     useEffect(() => {
-        console.log('ChatsPage: useEffect');
         getChats();
     }, []);
 

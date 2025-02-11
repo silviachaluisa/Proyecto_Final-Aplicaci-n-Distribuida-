@@ -106,7 +106,6 @@ export const ChatProvider = ({ children }) => {
             let data = response.data;
 
             if (response.status === 200) {
-                console.log(`Mensajes del chat ${chatId}:`, data);
                 setMessages(data);
             } else {
                 setNotification({ type: 'error', content: data.message });

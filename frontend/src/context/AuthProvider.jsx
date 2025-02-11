@@ -110,7 +110,8 @@ export const AuthProvider = ({ children }) => {
             if (response.status === 200) {
                 setUser({
                     email: data.email,
-                    name: data.name
+                    name: data.name,
+                    id: data.id
                 });
             } else {
                 setNotification({ type: 'error', content: data.message });

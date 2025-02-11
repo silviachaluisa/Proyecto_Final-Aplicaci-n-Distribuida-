@@ -10,7 +10,7 @@ const HeaderNav = () => {
         <header className="w-full bg-gray-500 dark:bg-gray-800 fixed top-0 z-10 px-4 sm:px-6 md:px-8">
             <nav className="bg-gray-500 dark:bg-gray-800 w-full shadow-lg rounded-lg">
                 <div className="max-w-4xl mx-auto flex items-center justify-between h-16">
-                    <Link to="/login" className="text-white hover:text-gray-300 font-bold text-lg">
+                    <Link to="/" className="text-white hover:text-gray-300 font-bold text-lg">
                         InstaMessage
                     </Link>
                     

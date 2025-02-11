@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { BsSendFill } from "react-icons/bs";
 import { Tooltip as ReactTooltip } from 'react-tooltip';
+import { useSocket } from "../context/useSocket";
 
 // Importación de contextos
 import { useChat } from '../context/ChatProvider';
@@ -8,6 +9,7 @@ import { useChat } from '../context/ChatProvider';
 const FooterChat = () => {
     const { selectedChat, sendMessage } = useChat();
     const [message, setMessage] = useState('');
+    const socket = useSocket();
 
     const handleChange = (e) => {
         setMessage(e.target.value);
@@ -15,6 +17,7 @@ const FooterChat = () => {
 
     const handleSendMessage = () => {
         sendMessage(selectedChat.id, message);
+        socket.emit("send_message", { chatId: selectedChat.id, content: message });
         setMessage('');
     };
 

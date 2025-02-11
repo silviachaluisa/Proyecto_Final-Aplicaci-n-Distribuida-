@@ -76,16 +76,19 @@ app.use((req, res, next) => {
 io.on('connection', (socket) => {
     console.log('Usuario conectado:', socket.id);
 
+    socket.on("join_chat", (chatId) => {
+        socket.join(chatId);
+        console.log(`📌 Usuario unido al chat ${chatId}`);
+    });
+
     // Escuchar el evento 'chat message'
-    socket.on('chat message', (msg) => {
-        console.log('Mensaje:', msg);
-        
-        // Enviar el mensaje a todos los clientes conectados
-        io.emit('chat message', msg);
+    socket.on("send_message", (message) => {
+        console.log("📩 Mensaje recibido:", message);
+        io.to(message.chatId).emit("receive_message", message.content); // Enviar mensaje al chat
     });
 
     // Escuchar el evento `create chat`
-    socket.on('reload chats', (chat) => {
+    socket.on('reload_chats', (chat) => {
         console.log('Chat creado:', chat);
         io.emit('reload chats', chat);
     });
